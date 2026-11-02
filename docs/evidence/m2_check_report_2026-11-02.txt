@@ -1,0 +1,160 @@
+M2 CHECK REPORT 2026-11-02T23:34:03+00:00 project C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis
+
+==============================================================================
+1. ENVIRONMENT
+==============================================================================
+Python 3.14.8 (C:\Users\kyans\AppData\Local\venvs\nvda-stock-analysis\Scripts\python.exe)
+  requests  pinned 2.34.2   installed 2.34.2   OK
+  pandas    pinned 3.1.0    installed 3.1.0    OK
+  pytest    pinned 9.1.1    installed 9.1.1    OK
+  PyYAML    pinned 6.0.3    installed 6.0.3    OK
+  yfinance  pinned 1.7.0    installed 1.7.0    OK
+Venv OK; lock file OK
+
+==============================================================================
+2. PROJECT FILES
+==============================================================================
+Expected files present: 43/43
+
+==============================================================================
+3. OFFLINE TESTS (synthetic data, no network)
+==============================================================================
+  ........................................................................ [ 97%]
+  ..                                                                       [100%]
+  74 passed, 7 deselected in 12.01s
+
+==============================================================================
+4. COLLECTION
+==============================================================================
+  20261102T230040Z: started 2026-11-02T18:00:40-05:00; 28 files OK
+  fred DGS10: failed in the main run, superseded by treasury added later
+
+==============================================================================
+5. PIPELINE ON THE SAVED COLLECTION + REPRODUCIBILITY
+==============================================================================
+  Collection 20261102T230040Z  ->  C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\data\clean\step2
+  NVDA  FY2017-FY2026  selected  1237  gaps  30  anomalies 15  fallback rows   0  files 1
+  AMD   FY2016-FY2025  selected  1294  gaps  14  anomalies  0  fallback rows 134  files 1
+  AVGO  FY2016-FY2025  selected  1143  gaps  23  anomalies  0  fallback rows  70  files 3
+  MRVL  FY2017-FY2026  selected  1253  gaps  20  anomalies  0  fallback rows   0  files 2
+  QCOM  FY2016-FY2025  selected  1405  gaps  22  anomalies  0  fallback rows  31  files 1
+  INTC  FY2016-FY2025  selected  1382  gaps  28  anomalies  0  fallback rows 158  files 1
+  market cutoff 2026-11-02  price rows 21792
+  Checks:
+  PASS  ALL    I1_identities_and_fiscal_calendars: 9 registrants verified against SEC ticker file and submissions
+  WARN  NVDA   W1_scale_anomalies_outside_window: 15 flagged outside the window (FY2010-FY2012); review only, values unchanged
+  PASS  MARKET P1_trading_days_match_reference: all 8 match SPY
+  PASS  MARKET P2_prices_positive_and_consistent: 0 rows with missing or inconsistent OHLC
+  PASS  MARKET P4a_every_symbol_has_cutoff_bar: cutoff 2026-11-02
+  PASS  MARKET P3_splits_match_sec_share_counts: NVDA 2021-07-20 x4.0: SEC first-filed shares Q1 FY2022 -> Q3 FY2022 ratio 4.016 OK; NVDA 2024-06-10 x10.0: SEC first-filed shares Q1 FY2025 -> Q3 FY2025 ratio 9.953 OK; AVGO 2024-07-15 x10.0: SEC first-filed shares Q2 FY2024 -> Q1 FY2025 ratio 10.075 OK; SOXX 2024-03-07 x3.0: no SEC share data (benchmark or ETF), not checked
+  PASS  MARKET P4b_risk_free_at_cutoff: US Treasury daily par yield curve, 10 Yr 4.91% observed 2026-11-02 (0 days before cutoff)
+  PASS  MARKET P5_shares_outstanding_with_provenance: 6 companies, each with accession and as-of date
+  PASS  MARKET W2_yfinance_shares_differ_over_5pct: all within 5%
+  ... 121/122 checks pass (company-level passes not listed)
+  reproducibility: 8/8 outputs byte-identical on rerun
+
+==============================================================================
+6. DATA REVIEW (for sign-off; nothing here changes data)
+==============================================================================
+  NVDA  FY2017-FY2026  annual coverage: capex FY2017-FY2021 (5)
+        rows by basis {'derived_q4': 63, 'derived_quarter': 62, 'reported_annual': 141, 'reported_instant': 263, 'reported_quarter': 412, 'reported_ytd': 296}; fallback rows 0; anomalies 15
+        LTM: latest 4 quarters end 2025-10-26 to 2026-07-26; missing none
+  AMD   FY2016-FY2025  annual coverage: complete
+        rows by basis {'derived_component': 65, 'derived_q4': 56, 'derived_quarter': 68, 'reported_annual': 134, 'reported_instant': 337, 'reported_quarter': 376, 'reported_ytd': 258}; fallback rows 134; anomalies 0
+        LTM: latest 4 quarters end 2025-09-27 to 2026-06-27; missing none
+  AVGO  FY2016-FY2025  annual coverage: complete
+        rows by basis {'derived_q4': 49, 'derived_quarter': 66, 'reported_annual': 129, 'reported_instant': 264, 'reported_quarter': 377, 'reported_ytd': 258}; fallback rows 70; anomalies 0
+        LTM: latest 4 quarters end 2025-11-02 to 2026-08-02; missing none
+  MRVL  FY2017-FY2026  annual coverage: complete
+        rows by basis {'derived_q4': 84, 'derived_quarter': 68, 'reported_annual': 142, 'reported_instant': 287, 'reported_quarter': 396, 'reported_ytd': 276}; fallback rows 0; anomalies 0
+        LTM: latest 4 quarters end 2025-11-01 to 2026-08-01; missing none
+  QCOM  FY2016-FY2025  annual coverage: complete
+        rows by basis {'derived_component': 129, 'derived_q4': 71, 'derived_quarter': 68, 'reported_annual': 152, 'reported_instant': 287, 'reported_quarter': 408, 'reported_ytd': 290}; fallback rows 31; anomalies 0
+        LTM: latest 4 quarters end 2025-09-28 to 2026-06-28; missing none
+  INTC  FY2016-FY2025  annual coverage: complete
+        rows by basis {'derived_component': 71, 'derived_q4': 98, 'derived_quarter': 72, 'reported_annual': 143, 'reported_instant': 364, 'reported_quarter': 349, 'reported_ytd': 285}; fallback rows 158; anomalies 0
+        LTM: latest 4 quarters end 2025-12-27 to 2026-09-26; missing none
+
+  Remaining gaps (excluding Q4 EPS/shares, not derivable by design):
+    AMD   revenue                1  FY2016-FY2016  derived_q4_inputs_missing: 9M YTD
+    AMD   revenue                3  FY2016-FY2016  no_observation
+    AVGO  net_income             3  FY2022-FY2024  derived_q4_not_computed: concept mismatch or ambiguous inputs
+    AVGO  revenue                1  FY2016-FY2016  derived_q4_inputs_missing: 9M YTD
+    AVGO  revenue                3  FY2016-FY2016  no_observation
+    INTC  operating_cash_flow    1  FY2017-FY2017  derived_q4_not_computed: concept mismatch or ambiguous inputs
+    INTC  operating_cash_flow    1  FY2018-FY2018  only_ytd_reported: derivation inputs incomplete
+    INTC  revenue                1  FY2016-FY2016  derived_q4_inputs_missing: 9M YTD
+    INTC  revenue                5  FY2016-FY2017  no_observation
+    NVDA  capex                  5  FY2017-FY2021  derived_q4_inputs_missing: annual
+    NVDA  capex                  7  FY2017-FY2023  no_observation
+    NVDA  capex                  2  FY2021-FY2023  only_ytd_reported: derivation inputs incomplete
+    QCOM  operating_cash_flow    2  FY2016-FY2017  derived_q4_inputs_missing: 9M YTD
+    QCOM  operating_cash_flow    5  FY2016-FY2017  no_observation
+
+  Market cutoff 2026-11-02 (collection started 2026-11-02T18:00:40-05:00; today's session complete)
+    AMD            close    466.84  shares   1632475042 as of 2026-07-29  mcap 762104648607  yf diff 0.00%
+    AVGO           close    322.23  shares   4773629865 as of 2026-08-28  mcap 1538206751399  yf diff 0.00%
+    INTC           close     59.97  shares   5315000000 as of 2026-10-23  mcap 318740550000  yf diff 0.00%
+    MRVL           close    171.41  shares    876900000 as of 2026-08-21  mcap 150309429000  yf diff 2.49%
+    NVDA           close    202.06  shares  24100000000 as of 2026-08-21  mcap 4869646000000  yf diff 0.20%
+    QCOM           close    162.08  shares   1050000000 as of 2026-07-27  mcap 170184000000  yf diff 1.70%
+    RISK_FREE_10Y  close      4.91  shares            - as of 2026-11-02  mcap -  yf diff -%
+    SOXX           close    453.65  shares            - as of -  mcap -  yf diff -%
+    SPY            close    752.10  shares            - as of -  mcap -  yf diff -%
+
+  ok   AMD W1_scale_anomalies_outside_window: 0 flagged outside the window (none); review only, values unchanged
+  ok   AVGO W1_scale_anomalies_outside_window: 0 flagged outside the window (none); review only, values unchanged
+  ok   INTC W1_scale_anomalies_outside_window: 0 flagged outside the window (none); review only, values unchanged
+  ok   MARKET W2_yfinance_shares_differ_over_5pct: all within 5%
+  ok   MRVL W1_scale_anomalies_outside_window: 0 flagged outside the window (none); review only, values unchanged
+  WARN NVDA W1_scale_anomalies_outside_window: 15 flagged outside the window (FY2010-FY2012); review only, values unchanged
+  ok   QCOM W1_scale_anomalies_outside_window: 0 flagged outside the window (none); review only, values unchanged
+  Error-level checks passing: 115/115
+
+==============================================================================
+7. RECONCILIATION (SEC reference values, price references, NVIDIA vs M1)
+==============================================================================
+  ......                                                                   [100%]
+  6 passed, 75 deselected in 0.53s
+
+==============================================================================
+8. GIT READINESS (nothing is committed by this script)
+==============================================================================
+  identity set; files to commit: 19
+    .gitignore
+    README.md
+    docs/data_dictionary.md
+    docs/decision_log.md
+    docs/issue_log.md
+    requirements-lock.txt
+    requirements.txt
+    config/universe.yaml
+    docs/m2_acceptance.md
+    python/fetch_step2.py
+    python/m2_check.py
+    python/run_step2.py
+    python/step2_market.py
+    python/step2_sec.py
+    tests/fixtures/price_reference_values.csv
+    tests/fixtures/reference_values_step2.csv
+    tests/step2_fixture.py
+    tests/test_reconciliation_step2.py
+    tests/test_step2.py
+  collections ignored by Git: yes
+
+==============================================================================
+9. STEP 2 ACCEPTANCE SUMMARY
+==============================================================================
+  [T] PASS    Environment, pins (incl. yfinance) and lock file
+  [T] PASS    All expected files present
+  [T] PASS    Offline test suite passes
+  [T] PASS    Collection complete (failures superseded)
+  [T] PASS    Pipeline: every error-level check passes
+  [T] PASS    Rerun is byte-identical
+  [V] PASS    Validation summary has no failing error-level check
+  [V] PASS    SEC and price references tie; NVIDIA equals M1
+  [V] MANUAL  Concept additions, derivations, gaps and warnings reviewed
+  [S] PASS    Git identity set, no unexpected files, raw data ignored
+  [S] MANUAL  Decisions accepted and Step 2 commit made
+
+  Outstanding before sign-off: only the MANUAL items

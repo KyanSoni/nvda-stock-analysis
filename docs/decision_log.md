@@ -50,8 +50,8 @@ A decision changes only through a new dated entry here; definitions are never ch
 
 ## Step 2 / M2 decisions (peers and market data)
 
-M2-D1 to M2-D10 were approved as recommended on 2026-11-02. M2-D11 onwards come from the evidence in the first collection
-(`20261102T230040Z`) and await sign-off.
+M2-D1 to M2-D10 were approved as recommended on 2026-11-02. M2-D11 to M2-D15 come from the evidence in the first collection
+(`20261102T230040Z`) and were accepted by Kyan on 2026-11-02.
 
 | ID | Decision | Status | Date |
 |---|---|---|---|
@@ -65,9 +65,9 @@ M2-D1 to M2-D10 were approved as recommended on 2026-11-02. M2-D11 onwards come 
 | M2-D8 | 10-year yield: FRED DGS10, latest observation on or before the cutoff, at most 5 days old | Confirmed | 2026-11-02 |
 | M2-D9 | Peer reference values: at least 3 per peer from the latest 10-K (56 used) | Confirmed | 2026-11-02 |
 | M2-D10 | Price reference values: NVDA, AVGO, SPY closes on two dates against Nasdaq historical quotes (6 used) | Confirmed | 2026-11-02 |
-| M2-D11 | Guarded fallback concepts (used only for periods where the guard concepts are absent or zero, enforced by C13): AVGO net income `ProfitLoss` (guard: NCI net income) and equity incl. NCI (guard: `MinorityInterest`); QCOM equity incl. NCI (guard: `MinorityInterest`); INTC operating cash flow from continuing operations (guard: discontinued-operations cash flow); INTC cash incl. restricted cash where `CashAndCashEquivalentsAtCarryingValue` is untagged (FY2019–FY2023; confirmed equal to balance-sheet cash for FY2022–FY2023, I-27) | Proposed | 2026-11-02 |
-| M2-D12 | Derived components, labelled `derived_component` and checked by C14: total liabilities = (liabilities + equity) − total equity incl. NCI for AMD and INTC; gross profit = revenue − cost of revenue for QCOM. Inputs are support items flagged `support_item=True` | Proposed | 2026-11-02 |
-| M2-D13 | Prices: yfinance `Close` is split-adjusted, so `close_as_traded` = Close × later split ratios is added; references compared to the cent; market cap = cutoff close rounded to the cent × cover-page shares (I-25, I-26) | Proposed | 2026-11-02 |
-| M2-D14 | If FRED does not respond, `fetch_step2.py --add-rates <collection>` adds FRED or, failing that, the US Treasury daily par yield file (10 Yr) to the same collection; the source used is recorded in `market_inputs.csv` | Proposed | 2026-11-02 |
-| M2-D15 | LTM readiness (C18): every flow item must have all four latest fiscal quarters (reported or derived) for every company | Proposed | 2026-11-02 |
+| M2-D11 | Guarded fallback concepts (used only for periods where the guard concepts are absent or zero, enforced by C13): AVGO net income `ProfitLoss` (guard: NCI net income) and equity incl. NCI (guard: `MinorityInterest`); QCOM equity incl. NCI (guard: `MinorityInterest`); INTC operating cash flow from continuing operations (guard: discontinued-operations cash flow); INTC cash incl. restricted cash where `CashAndCashEquivalentsAtCarryingValue` is untagged (FY2019–FY2023; confirmed equal to balance-sheet cash for FY2022–FY2023, I-27) | Confirmed | 2026-11-02 |
+| M2-D12 | Derived components, labelled `derived_component` and checked by C14: total liabilities = (liabilities + equity) − total equity incl. NCI for AMD and INTC; gross profit = revenue − cost of revenue for QCOM. Inputs are support items flagged `support_item=True` | Confirmed | 2026-11-02 |
+| M2-D13 | Prices: yfinance `Close` is split-adjusted, so `close_as_traded` = Close × later split ratios is added; references compared to the cent; market cap = cutoff close rounded to the cent × cover-page shares (I-25, I-26) | Confirmed | 2026-11-02 |
+| M2-D14 | If FRED does not respond, `fetch_step2.py --add-rates <collection>` adds FRED or, failing that, the US Treasury daily par yield file (10 Yr) to the same collection; the source used is recorded in `market_inputs.csv` | Confirmed | 2026-11-02 |
+| M2-D15 | LTM readiness (C18): every flow item must have all four latest fiscal quarters (reported or derived) for every company | Confirmed | 2026-11-02 |
 
