@@ -9,6 +9,7 @@ data/raw/sec/*
 !data/raw/sec/.gitkeep
 data/clean/*
 !data/clean/.gitkeep
+data/raw/collections/
 *.sqlite
 *.db
 

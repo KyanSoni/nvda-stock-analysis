@@ -1,0 +1,115 @@
+# Step 2 universe (decisions D1, D2, M2-D1, M2-D5). Changing anything here is a decision: log it.
+# CIKs and fiscal year-end months below are EXPECTED values. fetch_step2.py checks them against SEC's own
+# ticker file and submissions records and reports any mismatch; nothing is silently corrected.
+
+companies:
+  NVDA:
+    role: target
+    cik: "0001045810"
+    fy_end_month: 1
+  AMD:
+    role: peer
+    cik: "0000002488"
+    fy_end_month: 12
+    derived: [total_liabilities]          # M2-D12: AMD reports no total-liabilities line
+  AVGO:
+    role: peer
+    cik: "0001730168"
+    fy_end_month: 10
+    # Earlier registrants (M2-D1). UNVERIFIED until the identity report confirms name and filing dates.
+    predecessors:
+      - cik: "0001649338"
+        expected_name_contains: "BROADCOM"
+      - cik: "0001441634"
+        expected_name_contains: "AVAGO"
+    # M2-D11: guarded fallbacks, used only for periods where the guard concepts are absent or zero
+    extra_candidates:
+      net_income:
+        - concept: ProfitLoss
+          guard_zero_or_absent: [NetIncomeLossAttributableToNoncontrollingInterest]
+      stockholders_equity:
+        - concept: StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest
+          guard_zero_or_absent: [MinorityInterest]
+  MRVL:
+    role: peer
+    cik: "0001835632"
+    fy_end_month: 1
+    predecessors:
+      - cik: "0001058057"
+        expected_name_contains: "MARVELL"
+  QCOM:
+    role: peer
+    cik: "0000804328"
+    fy_end_month: 9
+    derived: [gross_profit]               # M2-D12: Qualcomm reports revenues and cost of revenues, no gross profit line
+    extra_candidates:
+      stockholders_equity:
+        - concept: StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest
+          guard_zero_or_absent: [MinorityInterest]
+  INTC:
+    role: peer
+    cik: "0000050863"
+    fy_end_month: 12
+    derived: [total_liabilities]          # M2-D12: Intel reports no total-liabilities line
+    extra_candidates:
+      operating_cash_flow:
+        - concept: NetCashProvidedByUsedInOperatingActivitiesContinuingOperations
+          guard_zero_or_absent: [CashProvidedByUsedInOperatingActivitiesDiscontinuedOperations]
+      cash_and_equivalents:
+        # Includes restricted cash. Used only where CashAndCashEquivalentsAtCarryingValue is untagged
+        # (FY2019-FY2023); equals balance-sheet cash for FY2022-FY2023 per the FY2023 10-K (issue I-27).
+        - concept: CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents
+
+benchmarks: [SPY, SOXX]
+
+# Inputs for derived line items (M2-D12). Selected with the same rules as the 12 line items,
+# written to the output flagged support_item=True, and used only by the derivations below.
+support_items:
+  cost_of_revenue:
+    statement: IS
+    period_type: duration
+    unit: USD
+    candidates: [CostOfRevenue, CostOfGoodsAndServicesSold]
+    derive_q4: true
+  liabilities_and_equity:
+    statement: BS
+    period_type: instant
+    unit: USD
+    candidates: [LiabilitiesAndStockholdersEquity]
+    derive_q4: false
+  total_equity:
+    statement: BS
+    period_type: instant
+    unit: USD
+    candidates:
+      - StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest
+      - concept: StockholdersEquity
+        guard_zero_or_absent: [MinorityInterest]
+    derive_q4: false
+
+derivations:
+  gross_profit: {minuend: revenue, subtrahend: cost_of_revenue}
+  total_liabilities: {minuend: liabilities_and_equity, subtrahend: total_equity}
+
+market:
+  price_start: "2016-01-01"           # M2-D6
+  fred_series: DGS10                  # M2-D8: 10-year US Treasury constant maturity yield, percent
+  fred_url: "https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
+  cutoff_rule: "latest completed US trading day before data collection (D12)"
+  market_close_et: "16:30"            # a session counts as completed after this New York time
+  # Fallback if FRED does not respond: the US Treasury's daily par yield curve (10 Yr column) - the series DGS10 is based on
+  treasury_url: "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{year}/all?type=daily_treasury_yield_curve&field_tdr_date_value={year}&page&_format=csv"
+  risk_free_max_lag_days: 5
+
+sec:
+  ticker_file_url: "https://www.sec.gov/files/company_tickers.json"
+  submissions_url: "https://data.sec.gov/submissions/CIK{cik}.json"
+  companyfacts_url: "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
+  user_agent_env: SEC_USER_AGENT
+  min_seconds_between_requests: 0.25
+  max_retries: 3
+  timeout_seconds: 60
+
+paths:
+  collections_dir: data/raw/collections   # one sub-folder per collection run, never overwritten
+  step2_out: data/clean/step2

@@ -56,3 +56,24 @@ Window: the latest fiscal year with reported annual revenue, and the 9 years bef
 - `m1_check_report.txt`: the full M1 status report written by `python/m1_check.py`.
 - `run_manifest.json`: snapshot file and hash, run time, Python/pandas versions, git commit, output hashes.
 - `data/raw/sec/manifest.csv`: one row per live fetch (time, URL, status, bytes, hash, file).
+
+# Step 2 outputs (`data/clean/step2/`)
+
+Built only from one saved collection in `data/raw/collections/<id>/` (never edited). Same CSV conventions as M1.
+
+| File | Contents |
+|---|---|
+| `identity_report.csv` | One row per registrant: CIK, role (current/predecessor), SEC name and former names, SEC fiscal year-end and the month it implies, first/last 10-K period, ticker-file CIK |
+| `facts_selected.csv` | All companies. M1 columns plus `ticker`, `entity_cik`, `entity_role`, `support_item`. `value_basis` adds `derived_quarter` (Q2/Q3 from YTD) and `derived_component` (from support items) |
+| `gap_report_all.csv`, `<TICKER>/gap_report.csv` | Missing values in each company's 10-year window, with reasons |
+| `anomalies_all.csv`, `<TICKER>/anomalies.csv` | Scale anomalies (C11/W1) |
+| `<TICKER>/sec_observations.csv` | Every SEC observation for the company and its predecessors, unchanged, with `entity_cik` |
+| `validation_summary.csv` | Every check: `scope` (ticker, MARKET or ALL), `check`, `passed`, `detail`, `level` (error/warning) |
+| `market/prices.csv` | Daily prices to the cutoff: open/high/low/close (split-adjusted), adj_close (split and dividend adjusted), volume, dividend, split_ratio, `close_as_traded`, source file and hash |
+| `market/corporate_actions.csv` | Splits and dividends from the price files |
+| `market/market_inputs.csv` | Per ticker at the cutoff: close, close_2dp, SEC cover-page shares (as-of date, accession, form), derived market cap, yfinance share cross-check; row `RISK_FREE_10Y` holds the 10-year yield (percent) and its observation date |
+| `run_manifest.json` | Collection id, per-company summary, versions, git commit, output hashes |
+| `m2_check_report.txt` | Full Step 2 status report from `python/m2_check.py` |
+
+Checks added in Step 2: I1 identities and fiscal calendars; I2 files match the collection manifest; C10 snapshot hashes are collection files; C12 derived quarters recompute; C13 guarded fallbacks respected; C14 derived components recompute; C15/C16 vocabulary and unique keys on all rows; C17 rows come from configured registrants; C18 latest four quarters complete; P1 trading days match SPY; P2 prices consistent; P3 splits match SEC share counts; P4a cutoff bar for every symbol; P4b risk-free at cutoff; P5 shares with provenance; W2 yfinance shares within 5%.
+

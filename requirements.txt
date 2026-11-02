@@ -5,3 +5,5 @@ requests==2.34.2
 pandas==3.1.0
 pytest==9.1.1
 PyYAML==6.0.3
+# Step 2 (M2b) price data; verified on Python 3.14.8 on 2026-11-02 (pip check clean)
+yfinance==1.7.0

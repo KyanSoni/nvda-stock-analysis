@@ -3,9 +3,10 @@
 Does NVIDIA's competitive position in AI computing justify the future cash flows implied by its current
 business performance and long-term growth expectations?
 
-This repository builds the answer in tested stages. **Current stage: M1** — retrieve NVIDIA's SEC
-companyfacts, keep every observation with full provenance, select one value per line item and period
-under documented rules, report gaps, and validate the result.
+This repository builds the answer in tested stages.
+- **M1 (signed off):** NVIDIA's SEC companyfacts with full provenance, documented selection rules, gaps and validation.
+- **Step 2 / M2:** the same for peers AMD, AVGO, MRVL, QCOM and INTC (including predecessor registrants), plus daily
+  prices, corporate actions, shares outstanding and the 10-year Treasury yield at one cutoff date.
 
 ## Setup (Windows, PowerShell)
 Python 3.14.8 with a project venv outside OneDrive:
@@ -24,17 +25,25 @@ $env:SEC_USER_AGENT = "Your Name your-email@example.com"
 & $vpy -m pytest -m live                          # live SEC retrieval test
 & $vpy -m pytest -m reconciliation                # compare output with tests\fixtures\reference_values.csv
 & $vpy python\m1_check.py                         # every M1 check in one go -> data\clean\m1_check_report.txt
+
+# Step 2
+& $vpy python\fetch_step2.py                      # download everything into data\raw\collections\<id> (needs SEC_USER_AGENT)
+& $vpy python\fetch_step2.py --add-rates <id>     # add the 10-year yield if FRED timed out
+& $vpy python\run_step2.py                        # process the latest collection offline -> data\clean\step2
+& $vpy python\m2_check.py                         # every Step 2 check in one go -> data\clean\step2\m2_check_report.txt
 ```
 
 ## Layout
 | Path | Contents |
 |---|---|
 | `config/project.yaml` | Company, SEC settings, the 12 line items and their candidate XBRL concepts |
-| `python/` | `fetch_sec.py`, `parse_companyfacts.py`, `select_facts.py`, `validate_m1.py`, `run_m1.py`, `m1_check.py` |
+| `config/universe.yaml` | Step 2 companies, predecessors, fallbacks, derivations, market settings |
+| `python/` | M1: `fetch_sec.py`, `parse_companyfacts.py`, `select_facts.py`, `validate_m1.py`, `run_m1.py`, `m1_check.py`; Step 2: `fetch_step2.py`, `step2_sec.py`, `step2_market.py`, `run_step2.py`, `m2_check.py` |
 | `tests/` | Offline unit, contract and reproducibility tests; live and reconciliation tests on request |
-| `data/raw/sec/` | Saved companyfacts snapshots and fetch manifest (not in Git) |
+| `data/raw/sec/` | M1 companyfacts snapshots and fetch manifest (not in Git) |
+| `data/raw/collections/` | Step 2 collections, one dated folder per download run (not in Git) |
 | `data/clean/` | Pipeline outputs (not in Git) |
 | `docs/` | Decision log, issue log, M1 acceptance checklist, data dictionary |
 
-## Peers and benchmarks (later milestones)
-Peers: AMD, AVGO, MRVL, QCOM, INTC. Benchmarks: SPY, SOXX.
+## Universe
+Target NVDA. Peers AMD, AVGO, MRVL, QCOM, INTC. Benchmarks SPY, SOXX.
