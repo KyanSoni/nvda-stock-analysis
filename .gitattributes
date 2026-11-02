@@ -1,0 +1,8 @@
+* text=auto
+*.py text eol=lf
+*.csv text eol=lf
+*.md text eol=lf
+*.yaml text eol=lf
+*.ini text eol=lf
+# The test snapshot is hashed in tests: Git must never change its bytes
+tests/fixtures/*.json -text

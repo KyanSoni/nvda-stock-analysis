@@ -1,0 +1,7 @@
+# Top-level packages for M1, pinned to the versions verified on Python 3.14.8 (Windows, 64-bit) on 2026-10-26.
+# The full dependency lock is requirements-lock.txt, generated from the verified environment with:
+#   & "$env:LOCALAPPDATA\venvs\nvda-stock-analysis\Scripts\python.exe" -m pip freeze > requirements-lock.txt
+requests==2.34.2
+pandas==3.1.0
+pytest==9.1.1
+PyYAML==6.0.3

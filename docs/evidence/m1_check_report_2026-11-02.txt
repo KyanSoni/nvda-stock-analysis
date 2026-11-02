@@ -1,0 +1,167 @@
+M1 CHECK REPORT  2026-11-02T22:36:16+00:00  project C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis
+
+==============================================================================
+1. ENVIRONMENT
+==============================================================================
+Python      3.14.8  (C:\Users\kyans\AppData\Local\venvs\nvda-stock-analysis\Scripts\python.exe)
+Venv        OK  (C:\Users\kyans\AppData\Local\venvs\nvda-stock-analysis)
+  requests   pinned 2.34.2   installed 2.34.2   OK
+  pandas     pinned 3.1.0    installed 3.1.0    OK
+  pytest     pinned 9.1.1    installed 9.1.1    OK
+  PyYAML     pinned 6.0.3    installed 6.0.3    OK
+Lock file   OK
+
+==============================================================================
+2. PROJECT FILES
+==============================================================================
+Expected files present: 30/30
+
+==============================================================================
+3. OFFLINE TESTS (synthetic snapshot, no network)
+==============================================================================
+  .........................................                                [100%]
+  41 passed, 4 deselected in 10.23s
+
+==============================================================================
+4. PIPELINE ON THE SAVED SNAPSHOT + REPRODUCIBILITY
+==============================================================================
+  "snapshot_file": "companyfacts_CIK0001045810_20261102T221620Z.json",
+  "scale_anomalies": 15,
+  "scale_anomalies_in_window": 0,
+  PASS  C1_all_observations_kept: 27281 rows parsed vs 27281 observations counted in the JSON
+  PASS  C2_unique_selected_keys: 0 duplicate key rows
+  PASS  C3_reported_rows_have_provenance: 0 blank provenance cells
+  PASS  C4_derived_rows_labelled: 0 derived rows mislabelled
+  PASS  C5_value_basis_vocabulary: unknown: []
+  PASS  C6_only_configured_concepts: 0 rows use unlisted concepts
+  PASS  C7_latest_filed_rule: 0 rows differ from independent latest-filed pick
+  PASS  C8_period_labels_consistent: 0 inconsistent labels
+  PASS  C9_derived_q4_arithmetic: 0 derived values do not recompute
+  PASS  C10_single_snapshot: 1 distinct snapshot hashes
+  PASS  C11_no_scale_anomalies_in_target_window: 0 flagged inside the target window (see anomalies.csv)
+  WARN  W1_scale_anomalies_outside_window: 15 flagged outside the window (FY2010-FY2012); review only, values unchanged
+  reproducibility  observations  MATCH
+  reproducibility  selected      MATCH
+  reproducibility  gaps          MATCH
+  reproducibility  availability  MATCH
+  reproducibility  validation    MATCH
+  reproducibility  anomalies     MATCH
+
+==============================================================================
+5. DATA REVIEW (for sign-off; nothing here changes data)
+==============================================================================
+  Snapshot companyfacts_CIK0001045810_20261102T221620Z.json  sha256 19ef503a5770f566...
+  Window FY2017-FY2026   selected rows 1175   restated 107
+
+  Annual coverage in the window (reported_annual or reported_instant at year end):
+    revenue                10/10
+    gross_profit           10/10
+    operating_income       10/10
+    net_income             10/10
+    eps_diluted            10/10
+    shares_diluted         10/10
+    total_assets           10/10
+    total_liabilities      10/10
+    stockholders_equity    10/10
+    cash_and_equivalents   10/10
+    operating_cash_flow    10/10
+    capex                   5/10   missing FY2017, FY2018, FY2019, FY2020, FY2021
+
+  Gaps by line item and reason:
+      5  capex                  derived_q4_inputs_missing: annual
+      7  capex                  no_observation
+     19  capex                  only_ytd_reported
+      6  eps_diluted            not_derivable_by_subtraction
+     19  operating_cash_flow    only_ytd_reported
+     10  shares_diluted         not_derivable_by_subtraction
+
+  Scale anomalies: 15 total, 0 inside the window
+    FY2010 FY  shares_diluted  vs_first_filed     ratio 1000.0000  window=False
+    FY2010 FY  shares_diluted  vs_previous_period ratio 1002.6417  window=False
+    FY2011 FY  shares_diluted  vs_first_filed     ratio 1000.0000  window=False
+    FY2010 Q1  shares_diluted  vs_previous_period ratio 0.0010  window=False
+    FY2010 Q2  shares_diluted  vs_first_filed     ratio 0.0010  window=False
+    FY2010 Q3  shares_diluted  vs_first_filed     ratio 0.0010  window=False
+    FY2011 Q3  shares_diluted  vs_first_filed     ratio 1000.0000  window=False
+    FY2011 Q3  shares_diluted  vs_previous_period ratio 1017.2567  window=False
+    FY2012 Q1  shares_diluted  vs_first_filed     ratio 1000.0000  window=False
+    FY2012 Q2  shares_diluted  vs_first_filed     ratio 1000.0000  window=False
+    FY2010 6M  shares_diluted  vs_previous_period ratio 0.0010  window=False
+    FY2010 9M  shares_diluted  vs_first_filed     ratio 0.0010  window=False
+    FY2011 9M  shares_diluted  vs_first_filed     ratio 1000.0000  window=False
+    FY2011 9M  shares_diluted  vs_previous_period ratio 1025.4908  window=False
+    FY2012 6M  shares_diluted  vs_first_filed     ratio 1000.0000  window=False
+
+  Restated rows by line item:
+     34  shares_diluted
+     17  eps_diluted
+     12  net_income
+      9  gross_profit
+      8  revenue
+      7  operating_income
+      7  operating_cash_flow
+      6  cash_and_equivalents
+      3  capex
+      3  stockholders_equity
+      1  total_assets
+
+==============================================================================
+6. RECONCILIATION AGAINST YOUR REFERENCE VALUES
+==============================================================================
+  Reference rows: 15 (need at least 3)
+    revenue FY2026 FY = 215938 USD millions
+    gross_profit FY2026 FY = 153463 USD millions
+    operating_income FY2026 FY = 130387 USD millions
+    net_income FY2026 FY = 120067 USD millions
+    eps_diluted FY2026 FY = 4.90 USD/shares
+    shares_diluted FY2026 FY = 24514 shares millions
+    total_assets FY2026 Q4 = 206803 USD millions
+    total_liabilities FY2026 Q4 = 49510 USD millions
+    stockholders_equity FY2026 Q4 = 157293 USD millions
+    cash_and_equivalents FY2026 Q4 = 10605 USD millions
+    operating_cash_flow FY2026 FY = 102718 USD millions
+    capex FY2026 FY = 6042 USD millions
+    revenue FY2025 FY = 130497 USD millions
+    eps_diluted FY2024 FY = 1.19 USD/shares
+    shares_diluted FY2024 FY = 24940 shares millions
+  ...                                                                      [100%]
+  3 passed, 42 deselected in 0.17s
+
+==============================================================================
+7. LIVE SEC TEST
+==============================================================================
+  .                                                                        [100%]
+  1 passed, 44 deselected in 1.02s
+
+==============================================================================
+8. GIT READINESS (nothing is committed by this script)
+==============================================================================
+  Repo root   OK
+  user.name   Kyan Soni
+  user.email  set
+  Branch      main   commits: 0
+  Files ready to add: 30
+  Raw snapshots ignored by Git: yes (2 files)
+
+==============================================================================
+9. M1 ACCEPTANCE SUMMARY
+==============================================================================
+  [T] PASS     Environment and pinned packages
+  [T] PASS     requirements-lock.txt generated
+  [T] PASS     All expected files present
+  [T] PASS     Offline test suite passes
+  [T] PASS     Live SEC test passes
+  [T] PASS     Pipeline run on saved snapshot: all error-level checks pass
+  [T] PASS     Rerun reproduces byte-identical outputs
+  [V] PASS     C1 every observation kept
+  [V] PASS     C3 full provenance on reported rows
+  [V] PASS     C4/C9 derived Q4 labelled and recomputes
+  [V] PASS     C11 no scale anomalies inside the window
+  [V] PASS     At least 3 reference values with full provenance
+  [V] PASS     Reference values tie exactly
+  [V] MANUAL   Capex concepts, gaps and restatements reviewed
+  [S] PASS     Git identity set, no unexpected files, raw data ignored
+  [S] MANUAL   Proposed decisions accepted in decision_log.md
+  [S] MANUAL   Kyan's sign-off and first commit
+
+  Outstanding before sign-off: only the MANUAL items

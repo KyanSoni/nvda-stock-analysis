@@ -1,0 +1,117 @@
+# NVIDIA Stock Analysis — M1 configuration (NVIDIA only)
+# Changing anything here is a decision: record it in docs/decision_log.md.
+
+company:
+  ticker: NVDA
+  cik: "0001045810"            # 10-digit, zero-padded
+  fiscal_year_end_month: 1     # NVIDIA's fiscal year ends late January
+
+sec:
+  companyfacts_url: "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
+  # Your SEC contact string is read from this environment variable, never stored in the repo.
+  user_agent_env: SEC_USER_AGENT
+  timeout_seconds: 60
+  max_retries: 3
+  min_seconds_between_requests: 0.2   # SEC fair-access limit is 10 requests/second
+
+paths:
+  raw_dir: data/raw/sec
+  manifest: data/raw/sec/manifest.csv
+  clean_dir: data/clean
+
+history:
+  target_fiscal_years: 10      # D11: target 10 fiscal years where available
+
+selection:
+  allowed_forms: ["10-K", "10-K/A", "10-Q", "10-Q/A"]
+  # Duration classification, in days between period start and end (inclusive window)
+  duration_days:
+    quarter: [80, 100]
+    ytd_6m: [170, 195]
+    ytd_9m: [260, 290]
+    annual: [355, 375]
+
+validation:
+  # C11 / W1 scale-anomaly check (issue I-16). Reporting only: values are never changed.
+  scale_ratio_low: 0.01
+  scale_ratio_high: 100
+  # Items compared with the previous period of the same basis (EPS and income items can swing legitimately, so excluded)
+  scale_check_items: [revenue, total_assets, total_liabilities, cash_and_equivalents, shares_diluted]
+
+# The 12 approved M1 line items.
+# candidates: XBRL concepts tried in priority order for each period. Only these are ever used.
+# derive_q4: true only for additive flow items, where Q4 = annual minus 9-month YTD is valid.
+line_items:
+  revenue:
+    statement: IS
+    period_type: duration
+    unit: USD
+    candidates: [Revenues, RevenueFromContractWithCustomerExcludingAssessedTax]
+    derive_q4: true
+  gross_profit:
+    statement: IS
+    period_type: duration
+    unit: USD
+    candidates: [GrossProfit]
+    derive_q4: true
+  operating_income:
+    statement: IS
+    period_type: duration
+    unit: USD
+    candidates: [OperatingIncomeLoss]
+    derive_q4: true
+  net_income:
+    statement: IS
+    period_type: duration
+    unit: USD
+    candidates: [NetIncomeLoss]
+    derive_q4: true
+  eps_diluted:
+    statement: IS
+    period_type: duration
+    unit: USD/shares
+    candidates: [EarningsPerShareDiluted]
+    derive_q4: false
+  shares_diluted:
+    statement: IS
+    period_type: duration
+    unit: shares
+    candidates: [WeightedAverageNumberOfDilutedSharesOutstanding]
+    derive_q4: false
+  total_assets:
+    statement: BS
+    period_type: instant
+    unit: USD
+    candidates: [Assets]
+    derive_q4: false
+  total_liabilities:
+    statement: BS
+    period_type: instant
+    unit: USD
+    candidates: [Liabilities]
+    derive_q4: false
+  stockholders_equity:
+    statement: BS
+    period_type: instant
+    unit: USD
+    candidates: [StockholdersEquity]
+    derive_q4: false
+  cash_and_equivalents:
+    statement: BS
+    period_type: instant
+    unit: USD
+    candidates: [CashAndCashEquivalentsAtCarryingValue]
+    derive_q4: false
+  operating_cash_flow:
+    statement: CF
+    period_type: duration
+    unit: USD
+    candidates: [NetCashProvidedByUsedInOperatingActivities]
+    derive_q4: true
+  capex:
+    statement: CF
+    period_type: duration
+    unit: USD
+    # Which concept NVIDIA uses is UNVERIFIED (issue I-12). Check concept_availability.csv after the first live run.
+    candidates: [PaymentsToAcquirePropertyPlantAndEquipment, PaymentsToAcquireProductiveAssets]
+    derive_q4: true
