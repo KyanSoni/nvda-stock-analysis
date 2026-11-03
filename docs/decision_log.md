@@ -19,8 +19,8 @@ A decision changes only through a new dated entry here; definitions are never ch
 | D10 | Kyan runs all commands locally and pastes results back | Confirmed | 2026-10-26 |
 | D11 | Target 10 fiscal years where available, plus quarterly history for LTM; unavailable periods logged, never filled | Confirmed | 2026-10-26 |
 | D12 | Valuation cutoff = latest completed trading day before data collection; actual date recorded; same cutoff for all market inputs | Confirmed | 2026-10-26 |
-| D13 | Source for NTM estimates, or LTM-only comps | Open (blocks Phases 4, 7a) | |
-| D14 | Exact scorecard formulas (ROIC, net debt incl. leases?, PEG growth) | Open (blocks Phase 4) | |
+| D13 | Source for NTM estimates, or LTM-only comps | Confirmed — yfinance (Yahoo Finance) consensus snapshot with provenance, cross-checked against a second public source (S4-D1, S4-D2); Kyan's choice | 2026-11-03 |
+| D14 | Exact scorecard formulas (ROIC, net debt incl. leases?, PEG growth) | Confirmed — ROIC and net debt as Step 3 (leases excluded, I-41); forward PEG per S4-D3; scoring rules S4-D7 | 2026-11-03 |
 | D15 | Revenue modelled at total or segment level | Open (blocks Phase 5) | |
 | D16 | Scenario drivers, WACC inputs, scenario weights, DCF/comps blend | Open (blocks Phases 5–7) | |
 | D17 | Merged into D2 | Closed | 2026-10-26 |
@@ -93,3 +93,20 @@ Where the implementation differs from the wording in the guide, the difference i
 | S3-D10 | Declared zeros (`declared_zero`, C22): AVGO (from FY2016) and MRVL (from FY2019) have no short-term investments line on the balance sheet; value 0 at each balance-sheet date with no reported value. Confirmed on the latest 10-Ks (current assets are cash, receivables, inventory and other only). Manual facts (`manual_from_filing`, C23) are supported but `config/manual_facts.csv` is empty | Confirmed | 2026-11-03 |
 | S3-D11 | LTM completeness: C18 stays an error for the Step 2 flow items; the new flow items are warning W4. Where LTM D&A is incomplete, valuation uses the latest fiscal year's EBITDA and says so in `ebitda_basis` (AMD at the cutoff) | Confirmed | 2026-11-03 |
 | S3-D12 | NVIDIA short-term investments. The FY2026 10-K shows one line "Marketable securities" (51,951 at FY2026 Q4) that includes publicly-held equity securities (12,886); NVIDIA tags only the debt part as `DebtSecuritiesCurrent` (39,065). Its Q2 FY2027 10-Q (accession 0001045810-26-000075) now presents the two as separate balance-sheet lines: marketable debt securities 34,143 and marketable equity securities 42,783 at 2026-07-26. **Decision: option (a), debt securities only** in net debt, EV and the ratio views, which is exactly NVIDIA's own debt-securities line. Reasons: consistent over NVIDIA's history in the pipeline, so no break in the series; equity stakes are price-volatile strategic holdings, not liquidity. They are not ignored: the Step 6 DCF bridge adds marketable equity securities as a separate, labelled non-operating asset at fair value from the latest filing (I-44). Effect of the alternative at the valuation date 2026-07-26: EV 42.8bn lower of 4,846bn (0.9%); EV/EBITDA 24.1 → 23.9; EV/revenue 16.0 → 15.9; P/E unchanged | Confirmed | 2026-11-03 |
+
+## Step 4 / M4 decisions (scorecard, consensus estimates, provisional WACC)
+
+Kyan chose the estimates source (yfinance consensus) and a provisional WACC now on 2026-11-03; the remaining
+definitions follow the recommendations in the Step 4 plan and become confirmed by Kyan's Step 4 commit.
+
+| ID | Decision | Status | Date |
+|---|---|---|---|
+| S4-D1 (D13) | Forward estimates: Yahoo Finance analyst consensus via yfinance `Ticker.earnings_estimate` and `revenue_estimate`, saved exactly as returned in `data/raw/estimates/<UTC id>/` with a manifest (bytes, SHA-256) by `fetch_step4.py`; parsed offline. Periods `0y` = current fiscal year not yet reported, `+1y` = next. Revenue estimates are stored for Step 7 | Confirmed (Kyan) | 2026-11-03 |
+| S4-D2 | Cross-check: at least NVIDIA `0y` and `+1y` consensus EPS against a second public source, recorded in `tests/fixtures/estimates_crosscheck.csv` with URL and date; tolerance 5% (providers' consensus differs by contributor set and date) | Confirmed | 2026-11-03 |
+| S4-D3 | Forward PEG = trailing GAAP P/E at the cutoff ÷ (100 × consensus EPS growth, `+1y` over `0y`). Not meaningful (scored fail) when P/E or growth is not positive; not scored when estimates are missing. Consensus EPS is usually on the providers' adjusted basis; only its growth rate is used, never its level (I-47) | Confirmed | 2026-11-03 |
+| S4-D4 | Beta: 60 monthly total returns (adj_close at the last trading day of each month) ending the month before the cutoff, regression slope on SPY (D2); raw, not Blume-adjusted. SOXX beta is reported alongside, not used | Confirmed | 2026-11-03 |
+| S4-D5 | Equity risk premium 5.0%, a labelled analyst assumption (mid-point of the guide's 4.5–5.5%); risk-free 4.91% from Step 2 (M2-D14) | Confirmed | 2026-11-03 |
+| S4-D6 | Provisional WACC = E/(D+E)·Ke + D/(D+E)·Kd·(1 − t). Ke = rf + β·ERP; Kd = latest fiscal-year interest expense ÷ average total debt (that and the prior fiscal year-end); t = `tax_rate_used`; E = market cap at the cutoff; D = book total debt at the valuation balance-sheet date. Step 6 revisits every input (I-48) | Confirmed | 2026-11-03 |
+| S4-D7 | Scoring: thresholds from the guide in `config/scorecard.yaml`; pass is strict (`>` or `<`), near miss inclusive (`>=` or `<=`); fundamentals from each company's latest fiscal year, valuation at the cutoff; gross margin compared with the median of the other five companies; a missing input is "not scored" (lowers the maximum) unless the rule says it is a fail: loss-making P/E, net income ≤ 0 for FCF conversion, EBITDA ≤ 0 for net debt/EBITDA, non-positive PEG | Confirmed | 2026-11-03 |
+| S4-D8 | Estimates are fetched after the valuation cutoff (consensus cannot be retrieved as of a past date); allowed up to 7 days after it (check E2), with the fetch time on every row. A deviation from D12, accepted for estimates only | Confirmed | 2026-11-03 |
+

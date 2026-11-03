@@ -1,0 +1,151 @@
+M4 CHECK REPORT 2026-11-03T18:10:07+00:00 project C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis
+
+==============================================================================
+1. ENVIRONMENT
+==============================================================================
+Python 3.14.8 (C:\Users\kyans\AppData\Local\venvs\nvda-stock-analysis\Scripts\python.exe)
+  requests  pinned 2.34.2   installed 2.34.2   OK
+  pandas    pinned 3.1.0    installed 3.1.0    OK
+  pytest    pinned 9.1.1    installed 9.1.1    OK
+  PyYAML    pinned 6.0.3    installed 6.0.3    OK
+  yfinance  pinned 1.7.0    installed 1.7.0    OK
+Venv OK; lock file OK
+
+==============================================================================
+2. PROJECT FILES
+==============================================================================
+Expected files present: 80/80
+
+==============================================================================
+3. POSTGRESQL
+==============================================================================
+  client psql (PostgreSQL) 18.6 (C:\Program Files\PostgreSQL\18\bin\psql.exe)
+  target postgres@localhost:5432/nvda_analysis schema analytics; password from PGPASSWORD
+  server PostgreSQL 18.6 (minimum 13)
+
+==============================================================================
+4. OFFLINE TESTS
+==============================================================================
+  ........................................................................ [ 69%]
+  ...............................                                          [100%]
+  103 passed, 19 deselected in 11.04s
+
+==============================================================================
+5. STEP 4a ESTIMATES SNAPSHOT + REPRODUCIBILITY
+==============================================================================
+  Step 4a estimates from snapshot 20261103T180459Z -> C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\data\clean\step4\estimates.csv (48 rows)
+  PASS  E1_estimates_files_valid_and_complete: 0y and +1y consensus EPS for every company
+  PASS  E2_estimates_fetched_near_cutoff: fetched 1 to 1 days after the cutoff 2026-11-02 (limit 7)
+  reproducibility: estimates.csv byte-identical on rerun
+
+==============================================================================
+6. STEP 4b SCORECARD DATABASE (twice) + IN-DATABASE CHECKS
+==============================================================================
+  schema: ok
+  load: ok
+  views: ok
+  exports: 5 views -> C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\data\clean\step4\exports
+  PASS  SC1_ten_tests_per_company: AMD:10 AVGO:10 INTC:10 MRVL:10 NVDA:10 QCOM:10
+  PASS  SC2_points_valid_and_totals_add_up: 60 test rows; results fail/near miss/pass
+  PASS  SC3_beta_full_window: AMD/SOXX 60m 2021-11-01..2026-10-01; AMD/SPY 60m 2021-11-01..2026-10-01; AVGO/SOXX 60m 2021-11-01..2026-10-01; AVGO/SPY 60m 2021-11-01..2026-10-01; INTC/SOXX 60m 2021-11-01..2026-10-01; INTC/SPY 60m 2021-11-01..2026-10-01; MRVL/SOXX 60m 2021-11-01..2026-10-01; MRVL/SPY 60m 2021-11-01..2026-10-01; NVDA/SOXX 60m 2021-11-01..2026-10-01; NVDA/SPY 60m 2021-11-01..2026-10-01; QCOM/SOXX 60m 2021-11-01..2026-10-01; QCOM/SPY 60m 2021-11-01..2026-10-01
+  PASS  SC4_consensus_eps_for_every_company: AMD:ok AVGO:ok INTC:ok MRVL:ok NVDA:ok QCOM:ok
+  PASS  SC5_wacc_for_every_company: AMD:17.31% AVGO:12.04% INTC:14.70% MRVL:16.08% NVDA:15.84% QCOM:12.47%
+  reproducibility: 5/5 exports byte-identical on a second rebuild
+
+==============================================================================
+7. STEP 4 VIEWS vs INDEPENDENT PYTHON RECOMPUTATION
+==============================================================================
+  PASS  V2_v_beta_matches_python: 60 cells compared, 0 differ; 
+  PASS  V2_v_wacc_matches_python: 36 cells compared, 0 differ; 
+  PASS  V2_v_peg_matches_python: 12 cells compared, 0 differ; 
+  PASS  V2_v_scorecard_detail_matches_python: 180 cells compared, 0 differ; 
+  PASS  V2_v_scorecard_matches_python: 18 cells compared, 0 differ; 
+
+==============================================================================
+8. SCORECARD REVIEW (for sign-off; nothing here changes data)
+==============================================================================
+  points per test (blank = not scored)
+    ticker   FY   t1  t2  t3  t4  t5  t6  t7  t8  t9 t10   total
+    NVDA   2026    2   1   2   2   2   2   1   2   2   2   18/20
+    QCOM   2025    2   2   0   2   2   2   2   2   2   2   18/20
+    AVGO   2025    2   0   2   2   2   2   2   1   1   0   14/20
+    AMD    2025    2   0   2   1   2   0   2   2   0   0   11/20
+    MRVL   2026    2   0   2   0   2   1   0   2   0   0   9/20
+    INTC   2025    0   0   0   0   2   0   0   2   0   0   4/20
+
+  NVIDIA by test:
+     1 Revenue growth, 5-yr CAGR               0.669  pass       
+     2 P/E (trailing)                          25.25  near miss  
+     3 PEG (P/E / forward EPS growth %)       0.3561  pass       
+     4 ROE, 5-yr average                      0.7498  pass       
+     5 Quick ratio                              3.24  pass       
+     6 Gross margin vs peer median            0.2005  pass       
+     7 FCF conversion (FCF / NI)              0.8052  near miss  
+     8 Net debt / EBITDA                     -0.3093  pass       
+     9 ROIC - WACC                             1.219  pass       
+    10 Share count, 5-yr change             -0.02335  pass       
+
+  Provisional WACC and forward PEG (S4-D3 to S4-D6):
+    ticker  beta      Ke     Kd  D/(D+E)    WACC  EPS FY0  EPS FY1  growth   PEG
+    AMD     2.49   17.4%   5.3%     0.4%   17.3%     7.63    16.07    111%  1.07
+    AVGO    1.49   12.4%   4.8%     3.7%   12.0%    11.67    19.47     67%  0.60
+    INTC    2.42   17.0%   2.3%    13.6%   14.7%     1.49     1.80     21%     -
+    MRVL    2.31   16.5%   4.7%     3.2%   16.1%     4.22     7.34     74%  0.77
+    NVDA    2.20   15.9%   3.1%     0.7%   15.8%     9.31    15.91     71%  0.36
+    QCOM    1.70   13.4%   4.5%     8.2%   12.5%    10.52    10.16     -3%     -
+
+  Failing error-level checks: none
+
+==============================================================================
+9. RECONCILIATION (all steps: filing references, SQL vs Python, consensus cross-check)
+==============================================================================
+  ...........                                                              [100%]
+  11 passed, 111 deselected in 3.56s
+
+==============================================================================
+10. GIT READINESS (nothing is committed by this script)
+==============================================================================
+  identity set; files to commit: 20
+    .gitignore
+    README.md
+    docs/data_dictionary.md
+    docs/decision_log.md
+    docs/issue_log.md
+    config/scorecard.yaml
+    docs/m4_acceptance.md
+    python/fetch_step4.py
+    python/m4_check.py
+    python/run_step4.py
+    python/step4_db.py
+    python/step4_estimates.py
+    python/step4_reference.py
+    sql/scorecard.sql
+    sql/step4_checks.sql
+    sql/step4_schema.sql
+    tests/fixtures/estimates_crosscheck.csv
+    tests/test_db_step4.py
+    tests/test_reconciliation_step4.py
+    tests/test_step4.py
+  raw collections and data/clean outputs ignored by Git: yes
+  e-mail or stored password in files to commit: none
+  raw estimates snapshots ignored by Git: yes
+
+==============================================================================
+11. STEP 4 ACCEPTANCE SUMMARY
+==============================================================================
+  [T] PASS    Environment, pins and lock file
+  [T] PASS    All expected files present
+  [T] PASS    PostgreSQL reachable
+  [T] PASS    Offline test suite passes
+  [T] PASS    Estimates snapshot complete and fresh (E1, E2)
+  [T] PASS    Estimates rerun byte-identical
+  [T] PASS    Scorecard views build; SC1-SC5 pass
+  [T] PASS    Second rebuild gives byte-identical exports
+  [V] PASS    No failing error-level check
+  [V] PASS    Every Step 4 view equals the Python recomputation
+  [V] PASS    All reconciliation tests pass, incl. the consensus cross-check
+  [V] MANUAL  Scores, WACC inputs and estimate dates reviewed
+  [S] PASS    Git identity set, no unexpected files, outputs ignored, no secrets
+  [S] MANUAL  Decisions accepted and Step 4 commit made
+
+  Outstanding before sign-off: only the MANUAL items

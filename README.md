@@ -37,6 +37,11 @@ $env:PGPASSWORD = "<postgres password>"
 & $vpy python\run_step3.py all                    # facts + database + exports -> data\clean\step3
 & $vpy -m pytest -m db                            # database tests (rebuild the analytics schema)
 & $vpy python\m3_check.py                         # every Step 3 check in one go -> data\clean\step3\m3_check_report.txt
+
+# Step 4 (needs Step 3 built in the same database)
+& $vpy python\fetch_step4.py                      # snapshot consensus estimates -> data\raw\estimates\<id> (network)
+& $vpy python\run_step4.py all                    # estimates + beta, WACC, PEG and scorecard views -> data\clean\step4
+& $vpy python\m4_check.py                         # every Step 4 check -> data\clean\step4\m4_check_report.txt
 ```
 
 ## Layout
@@ -44,9 +49,10 @@ $env:PGPASSWORD = "<postgres password>"
 |---|---|
 | `config/project.yaml` | Company, SEC settings, the 12 line items and their candidate XBRL concepts |
 | `config/universe.yaml` | Step 2 companies, predecessors, fallbacks, derivations, market settings |
+| `config/scorecard.yaml` | Step 4 tests and thresholds, estimates source, WACC assumptions |
 | `config/step3.yaml`, `config/manual_facts.csv`, `config/database.yaml` | Step 3 line items and derivations, manual facts (empty), PostgreSQL connection (no password) |
 | `sql/` | `schema.sql`, `views.sql`, `checks.sql`, `queries/` |
-| `python/` | M1: `fetch_sec.py`, `parse_companyfacts.py`, `select_facts.py`, `validate_m1.py`, `run_m1.py`, `m1_check.py`; Step 2: `fetch_step2.py`, `step2_sec.py`, `step2_market.py`, `run_step2.py`, `m2_check.py`; Step 3: `step3_facts.py`, `run_step3.py`, `step3_db.py`, `step3_reference.py`, `m3_check.py` |
+| `python/` | M1: `fetch_sec.py`, `parse_companyfacts.py`, `select_facts.py`, `validate_m1.py`, `run_m1.py`, `m1_check.py`; Step 2: `fetch_step2.py`, `step2_sec.py`, `step2_market.py`, `run_step2.py`, `m2_check.py`; Step 3: `step3_facts.py`, `run_step3.py`, `step3_db.py`, `step3_reference.py`, `m3_check.py`; Step 4: `fetch_step4.py`, `step4_estimates.py`, `step4_db.py`, `step4_reference.py`, `run_step4.py`, `m4_check.py` |
 | `tests/` | Offline unit, contract and reproducibility tests; live and reconciliation tests on request |
 | `data/raw/sec/` | M1 companyfacts snapshots and fetch manifest (not in Git) |
 | `data/raw/collections/` | Step 2 collections, one dated folder per download run (not in Git) |

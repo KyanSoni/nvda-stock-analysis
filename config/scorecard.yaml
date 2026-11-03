@@ -1,0 +1,37 @@
+# Step 4: scorecard rules, forward estimates and the provisional WACC (decisions S4-D1 to S4-D8, docs/decision_log.md).
+# 2 points = pass, 1 = near miss, 0 = fail. A pass is strict, a near miss inclusive:
+#   direction higher: pass if value > pass, near miss if value >= near
+#   direction lower:  pass if value < pass, near miss if value <= near
+# "fail_when_null" says why a missing input still scores 0 as a scored fail (e.g. a loss-making company has no P/E);
+# any other missing input means "not scored" and lowers the maximum possible points.
+
+tests:
+  1:  {name: "Revenue growth, 5-yr CAGR",     metric: revenue_cagr_5y,      source: v_ratios_annual,    direction: higher, pass: 0.10, near: 0.05}
+  2:  {name: "P/E (trailing)",                metric: pe_ltm,               source: v_valuation_cutoff, direction: lower,  pass: 25,   near: 35,  fail_when_null: "LTM net income <= 0"}
+  3:  {name: "PEG (P/E / forward EPS growth %)", metric: peg_forward,       source: v_peg,              direction: lower,  pass: 2,    near: 3,   fail_when_null: "P/E or forward EPS growth not positive"}
+  4:  {name: "ROE, 5-yr average",             metric: roe_5y_avg,           source: v_ratios_annual,    direction: higher, pass: 0.15, near: 0.10}
+  5:  {name: "Quick ratio",                   metric: quick_ratio,          source: v_ratios_annual,    direction: higher, pass: 1.5,  near: 1.0}
+  6:  {name: "Gross margin vs peer median",   metric: gross_margin_vs_peer_median, source: v_ratios_annual, direction: higher, pass: 0, near: -0.05}
+  7:  {name: "FCF conversion (FCF / NI)",     metric: fcf_conversion,       source: v_ratios_annual,    direction: higher, pass: 0.90, near: 0.70, fail_when_null: "net income <= 0"}
+  8:  {name: "Net debt / EBITDA",             metric: net_debt_to_ebitda,   source: v_ratios_annual,    direction: lower,  pass: 1,    near: 2,   fail_when_null: "EBITDA <= 0"}
+  9:  {name: "ROIC - WACC",                   metric: roic_minus_wacc,      source: v_ratios_annual + wacc, direction: higher, pass: 0.05, near: 0}
+  10: {name: "Share count, 5-yr change",      metric: shares_change_5y,     source: v_ratios_annual,    direction: lower,  pass: -0.02, near: 0.02}
+
+periods:
+  fundamentals: latest fiscal year with revenue, each company's own fiscal label (D5)
+  market: valuation cutoff from Step 2 (D12)
+
+estimates:                       # S4-D1 (D13): yfinance consensus, snapshot with provenance
+  source: "Yahoo Finance analyst consensus via yfinance Ticker.earnings_estimate / revenue_estimate"
+  raw_dir: data/raw/estimates    # one dated folder per fetch, never edited
+  current_period: "0y"           # current fiscal year (not yet reported at fetch)
+  next_period: "+1y"
+  max_days_after_cutoff: 7       # estimates must be fetched within a week of the valuation cutoff
+
+wacc:                            # S4-D4 to S4-D6: provisional CAPM WACC, revisited in Step 6
+  benchmark: SPY                 # beta vs the S&P 500 (D2); SOXX beta reported alongside
+  extra_benchmarks: [SOXX]
+  months: 60                     # 5 years of monthly total returns (adj_close), ending the last month-end before the cutoff
+  equity_risk_premium: 0.05      # analyst assumption, labelled; Damodaran-style 4.5-5.5% range, mid-point used
+  cost_of_debt: "interest expense (latest FY) / average total debt (latest and prior fiscal year-end)"
+  debt_weight: "book total debt at the valuation balance-sheet date / (book debt + market cap)"

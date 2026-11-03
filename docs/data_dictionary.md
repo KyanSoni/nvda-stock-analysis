@@ -110,3 +110,23 @@ Built from the signed-off Step 2 collection (id read from `data/clean/step2/run_
 | `v_peer_summary` | company | Latest-year headline ratios and valuation |
 
 Checks added in Step 3: C19 split-adjusted EPS × shares ≈ net income; C20 adjusted shares smooth; C21 derived sums recompute; C22 declared zeros only where configured; C23 manual facts valid; C24 Step 2 rows unchanged; W3 coverage; W4 LTM for new flows; DB1–DB6; V1 SQL equals Python recomputation.
+
+# Step 4 outputs (`data/clean/step4/`)
+
+Built from the Step 3 schema plus one consensus snapshot in `data/raw/estimates/<UTC id>/` (never edited; not in Git).
+
+| File | Contents |
+|---|---|
+| `estimates.csv` | One row per company, kind (`eps`, `revenue`) and Yahoo period (`0q`, `+1q`, `0y`, `+1y`): avg, low, high, analysts, year-ago value, Yahoo's growth, fetch time, snapshot id, raw file and its SHA-256. Values as text, blank when Yahoo gives none |
+| `estimates_manifest.json` | Snapshot id and info, cutoff, output hash, checks E1 (files valid, `0y` and `+1y` EPS for every company) and E2 (fetched within 7 days of the cutoff) |
+| `load/*.csv` | `scorecard_rules`, `scorecard_params`, `estimates` exactly as loaded |
+| `db_checks_step4.csv` | SC1 ten tests per company; SC2 points 0–2 and totals add up; SC3 full 60-month beta window; SC4 consensus EPS for every company; SC5 WACC for every company |
+| `exports/v_beta.csv` | Per company and benchmark (SPY, SOXX): beta, correlation, months, first and last month |
+| `exports/v_wacc.csv` | Risk-free, beta (SPY), ERP, cost of equity, interest, debt, pre-tax cost of debt, tax rate, market cap, debt weight, provisional WACC |
+| `exports/v_peg.csv` | Trailing P/E, consensus EPS `0y` and `+1y`, analysts, forward EPS growth, forward PEG |
+| `exports/v_scorecard_detail.csv` | One row per company and test: metric value, thresholds, points, result (pass / near miss / fail / not scored), reason |
+| `exports/v_scorecard.csv` | One row per company: points per test (blank = not scored), total, maximum possible, tests scored |
+| `db_manifest_step4.json` | Load and export hashes, checks result |
+| `m4_check_report.txt` | Full Step 4 status report from `python/m4_check.py` |
+
+Database additions (schema `analytics`): tables `scorecard_rules`, `scorecard_params`, `estimates`; views `v_latest_annual`, `v_beta`, `v_wacc`, `v_peg`, `v_scorecard_metrics`, `v_scorecard_detail`, `v_scorecard`. Rebuilding Step 3 (`run_step3.py db`) drops them; rerun `run_step4.py db` afterwards.
