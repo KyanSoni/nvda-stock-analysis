@@ -1,4 +1,4 @@
-M3 CHECK REPORT 2026-11-03T16:20:31+00:00 project C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis
+M3 CHECK REPORT 2026-11-03T16:25:03+00:00 project C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis
 
 ==============================================================================
 1. ENVIRONMENT
@@ -28,7 +28,7 @@ Expected files present: 64/64
 ==============================================================================
   ........................................................................ [ 84%]
   .............                                                            [100%]
-  85 passed, 14 deselected in 22.03s
+  85 passed, 14 deselected in 8.17s
 
 ==============================================================================
 5. STEP 3a FACTS ON THE SIGNED-OFF COLLECTION + REPRODUCIBILITY
@@ -136,37 +136,16 @@ Expected files present: 64/64
 9. RECONCILIATION (Step 2 and Step 3 filing references, reported ratios, SQL vs Python)
 ==============================================================================
   .........                                                                [100%]
-  9 passed, 90 deselected in 1.56s
+  9 passed, 90 deselected in 1.68s
 
 ==============================================================================
 10. GIT READINESS (nothing is committed by this script)
 ==============================================================================
-  identity set; files to commit: 25
-    README.md
-    docs/data_dictionary.md
+  identity set; files to commit: 4
     docs/decision_log.md
     docs/issue_log.md
-    pytest.ini
-    config/database.yaml
-    config/manual_facts.csv
-    config/step3.yaml
     docs/m3_acceptance.md
     python/m3_check.py
-    python/run_step3.py
-    python/step3_db.py
-    python/step3_facts.py
-    python/step3_reference.py
-    sql/checks.sql
-    sql/queries/q1_highest_3y_avg_roe.sql
-    sql/queries/q2_gross_margin_vs_peer_median.sql
-    sql/queries/q3_nvda_fcf_vs_net_income.sql
-    sql/schema.sql
-    sql/views.sql
-    tests/fixtures/ratio_reference_values.csv
-    tests/fixtures/reference_values_step3.csv
-    tests/test_db_step3.py
-    tests/test_reconciliation_step3.py
-    tests/test_step3.py
   raw collections and data/clean outputs ignored by Git: yes
   e-mail or stored password in files to commit: none
 
@@ -185,7 +164,7 @@ Expected files present: 64/64
   [V] PASS    Every SQL ratio equals the Python recomputation
   [V] PASS    Filing references, reported ratios and Step 2 references tie
   [V] MANUAL  Warnings, definitions and open decision S3-D12 reviewed
-  [S] FAIL    Git identity set, no unexpected files, outputs ignored, no secrets
+  [S] PASS    Git identity set, no unexpected files, outputs ignored, no secrets
   [S] MANUAL  Decisions accepted and Step 3 commit made
 
-  Outstanding before sign-off: Git identity set, no unexpected files, outputs ignored, no secrets
+  Outstanding before sign-off: only the MANUAL items

@@ -188,11 +188,11 @@ def git():
         say(f"    {'UNEXPECTED ' if p in unexpected else ''}{p}")
     ignored = [p for p in ("data/raw/collections/x", "data/clean/step3/x.csv") if run(["git", "check-ignore", "-q", p])[0] != 0]
     say(f"  raw collections and data/clean outputs ignored by Git: {'yes' if not ignored else 'NO: ' + ', '.join(ignored)}")
-    email = os.environ.get("SEC_USER_AGENT", "").split()[-1:]          # the e-mail you set for SEC, never in Git
+    sec_email = os.environ.get("SEC_USER_AGENT", "").split()[-1:]          # the e-mail you set for SEC, never in Git
     password = re.compile(r"""pgpassword\s*=\s*["']?(?!<|\.\.\.|["'])\S""", re.I)   # a real value, not a placeholder
     def leaks(p):
         text = (PROJECT_ROOT / p).read_text(encoding="utf-8", errors="replace")
-        return (email and "@" in email[0] and email[0].lower() in text.lower()) or password.search(text)
+        return (sec_email and "@" in sec_email[0] and sec_email[0].lower() in text.lower()) or password.search(text)
     secret = [p for p in pending if (PROJECT_ROOT / p).is_file()
               and p.endswith((".py", ".yaml", ".md", ".sql", ".ini", ".txt", ".csv", ".conf")) and leaks(p)]
     say(f"  e-mail or stored password in files to commit: {'none' if not secret else ', '.join(secret)}")
