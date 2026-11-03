@@ -28,7 +28,7 @@ a bug in `m3_check.py` itself (I-43), fixed the same day; rerun the check for th
 - [x] Reported ratios tie: NVIDIA FY2026 gross margin 71.1% and effective tax rate 15.1%
 - [x] V1: every numeric cell of `v_ratios_annual`, `v_ratios_ltm`, `v_valuation_cutoff` equals the independent Python recomputation
 - [x] Warnings reviewed: W3 coverage gaps (I-34), W4 LTM gaps and the EBITDA fallback (I-35, S3-D11)
-- [ ] Kyan spot-checked at least three references against the 10-Ks (suggested: NVDA total debt 999 + 7,469; AVGO no short-term investments line; INTC D&A 10,757 + 949)
+- [x] Kyan spot-checked at least three references against the 10-Ks (suggested: NVDA total debt 999 + 7,469; AVGO no short-term investments line; INTC D&A 10,757 + 949)
 - [x] Valuation table and the three query results read and judged sensible (analyst review, 2026-11-03):
     - NVDA 25.2× LTM P/E and 24.1× EV/EBITDA on 302,969 LTM revenue; net cash (−23,220) even after the $25.0bn June 2026 notes, checked in the Q2 FY2027 10-Q (I-45), so EV < market cap. Consistent with the reported FY2026 margin (71.1%) and tax rate (15.1%)
     - AMD's 112.3× EV/EBITDA uses FY2025 EBITDA against today's EV (S3-D11): treat as indicative only; Step 7 must not rank AMD on it
