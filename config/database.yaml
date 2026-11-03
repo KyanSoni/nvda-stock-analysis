@@ -1,0 +1,10 @@
+# PostgreSQL connection for Step 3 (S3-D4). The password is NEVER stored here or in Git:
+#   set it for the PowerShell session with  $env:PGPASSWORD = "..."   or use a pgpass.conf file.
+# Standard libpq environment variables (PGHOST, PGPORT, PGDATABASE, PGUSER) override the values below.
+host: localhost
+port: 5432
+dbname: nvda_analysis
+user: postgres
+schema: analytics          # dropped and rebuilt on every run: keep nothing else in this schema
+psql: auto                 # auto = psql on PATH, else the newest C:\Program Files\PostgreSQL\<version>\bin\psql.exe
+min_server_version: 13

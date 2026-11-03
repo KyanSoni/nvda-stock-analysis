@@ -77,3 +77,36 @@ Built only from one saved collection in `data/raw/collections/<id>/` (never edit
 
 Checks added in Step 2: I1 identities and fiscal calendars; I2 files match the collection manifest; C10 snapshot hashes are collection files; C12 derived quarters recompute; C13 guarded fallbacks respected; C14 derived components recompute; C15/C16 vocabulary and unique keys on all rows; C17 rows come from configured registrants; C18 latest four quarters complete; P1 trading days match SPY; P2 prices consistent; P3 splits match SEC share counts; P4a cutoff bar for every symbol; P4b risk-free at cutoff; P5 shares with provenance; W2 yfinance shares within 5%.
 
+
+# Step 3 outputs (`data/clean/step3/`)
+
+Built from the signed-off Step 2 collection (id read from `data/clean/step2/run_manifest.json`). Step 2 rows are carried unchanged (C24).
+
+| File | Contents |
+|---|---|
+| `facts_extended.csv` | Step 2 columns plus `split_factor`, `value_split_adjusted`, `display_split_adjusted` (EPS and diluted shares only), `source_url`, `location_in_filing` (manual facts only). `value_basis` adds `derived_sum`, `declared_zero`, `manual_from_filing` |
+| `split_factors.csv` | Splits used for adjustment: ticker, date, ratio |
+| `gap_report_step3.csv` | Missing values after the Step 3 derivations |
+| `validation_step3.csv` | C1–C18 on the Step 2 rows, C18/W4 LTM, C19–C24, C15b/C16b, W3 coverage; `level` error/warning |
+| `facts_manifest.json` | Collection id, Step 2 output hashes, per-company summary, output hashes |
+| `load/*.csv` | Exactly what is loaded into PostgreSQL, in table column order |
+| `db_checks.csv` | DB1 row counts vs load files; DB2/DB3 duplicate periods agree; DB4 ratios for every company; DB5 one cutoff; DB6 valuation for every company |
+| `exports/<view>.csv` | Every view, ordered (see below) |
+| `exports/q1…q3.csv` | The guide's three questions |
+| `db_manifest.json` | Server version, psql version, load and export hashes, checks result |
+| `m3_check_report.txt` | Full Step 3 status report from `python/m3_check.py` |
+
+**Database** (PostgreSQL, schema `analytics`). Tables: `companies`, `line_items`, `facts`, `split_factors`, `prices`, `market_inputs`, `load_manifest`. Amounts in views are in **USD millions** (shares in millions; EPS in USD, split-adjusted); ratios are fractions (0.711 = 71.1%).
+
+| View | One row per | Contents |
+|---|---|---|
+| `v_facts_used` | fact | Facts used in analysis (no support items, no YTD), with `amount` |
+| `v_annual` | ticker, fiscal_year | Every line item: FY flows, Q4 balance-sheet values |
+| `v_quarterly` | ticker, period_end | Every line item for fiscal quarters |
+| `v_ltm` | ticker, period_end | Sums of the last 4 quarters (NULL unless 4 consecutive quarters spanning 250–300 days) and the balance sheet at that date |
+| `v_ratios_annual` | ticker, fiscal_year | Growth, 5-year revenue CAGR, margins, ROE (+3/5-year averages), quick ratio, FCF, FCF conversion, net debt, EBITDA, net debt/EBITDA, effective and used tax rate, NOPAT, invested capital, ROIC, 5-year share change, 3-year NI CAGR |
+| `v_ratios_ltm` | ticker, period_end | LTM revenue, growth, margins, net income, FCF, EBITDA, net debt |
+| `v_valuation_cutoff` | company | Market cap, latest complete LTM, latest balance sheet, EV, P/E, EV/revenue, EV/EBITDA (`ebitda_basis`), historical PEG, risk-free rate |
+| `v_peer_summary` | company | Latest-year headline ratios and valuation |
+
+Checks added in Step 3: C19 split-adjusted EPS × shares ≈ net income; C20 adjusted shares smooth; C21 derived sums recompute; C22 declared zeros only where configured; C23 manual facts valid; C24 Step 2 rows unchanged; W3 coverage; W4 LTM for new flows; DB1–DB6; V1 SQL equals Python recomputation.

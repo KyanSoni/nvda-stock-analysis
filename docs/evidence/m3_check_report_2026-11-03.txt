@@ -1,0 +1,191 @@
+M3 CHECK REPORT 2026-11-03T16:20:31+00:00 project C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis
+
+==============================================================================
+1. ENVIRONMENT
+==============================================================================
+Python 3.14.8 (C:\Users\kyans\AppData\Local\venvs\nvda-stock-analysis\Scripts\python.exe)
+  requests  pinned 2.34.2   installed 2.34.2   OK
+  pandas    pinned 3.1.0    installed 3.1.0    OK
+  pytest    pinned 9.1.1    installed 9.1.1    OK
+  PyYAML    pinned 6.0.3    installed 6.0.3    OK
+  yfinance  pinned 1.7.0    installed 1.7.0    OK
+Venv OK; lock file OK
+
+==============================================================================
+2. PROJECT FILES
+==============================================================================
+Expected files present: 64/64
+
+==============================================================================
+3. POSTGRESQL
+==============================================================================
+  client psql (PostgreSQL) 18.6 (C:\Program Files\PostgreSQL\18\bin\psql.exe)
+  target postgres@localhost:5432/nvda_analysis schema analytics; password from PGPASSWORD
+  server PostgreSQL 18.6 (minimum 13)
+
+==============================================================================
+4. OFFLINE TESTS
+==============================================================================
+  ........................................................................ [ 84%]
+  .............                                                            [100%]
+  85 passed, 14 deselected in 22.03s
+
+==============================================================================
+5. STEP 3a FACTS ON THE SIGNED-OFF COLLECTION + REPRODUCIBILITY
+==============================================================================
+  Step 3a facts from collection 20261102T230040Z -> C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\data\clean\step3
+  NVDA  rows  2311  gaps  53  {'derived_q4': 159, 'derived_quarter': 87, 'derived_sum': 22, 'reported_annual': 268, 'reported_instant': 590, 'reported_quarter': 684, 'reported_ytd': 501}
+  AMD   rows  2403  gaps  48  {'derived_component': 65, 'derived_q4': 97, 'derived_quarter': 124, 'derived_sum': 115, 'reported_annual': 247, 'reported_instant': 721, 'reported_quarter': 602, 'reported_ytd': 432}
+  AVGO  rows  2290  gaps  47  {'declared_zero': 40, 'derived_q4': 115, 'derived_quarter': 136, 'derived_sum': 75, 'reported_annual': 246, 'reported_instant': 561, 'reported_quarter': 650, 'reported_ytd': 467}
+  MRVL  rows  2472  gaps  68  {'declared_zero': 30, 'derived_q4': 175, 'derived_quarter': 131, 'derived_sum': 149, 'reported_annual': 269, 'reported_instant': 603, 'reported_quarter': 636, 'reported_ytd': 479}
+  QCOM  rows  2423  gaps  24  {'derived_component': 129, 'derived_q4': 147, 'derived_quarter': 126, 'derived_sum': 43, 'reported_annual': 267, 'reported_instant': 659, 'reported_quarter': 597, 'reported_ytd': 455}
+  INTC  rows  2720  gaps  28  {'derived_component': 71, 'derived_q4': 196, 'derived_quarter': 151, 'derived_sum': 197, 'reported_annual': 249, 'reported_instant': 790, 'reported_quarter': 574, 'reported_ytd': 492}
+  WARN  NVDA  W1_scale_anomalies_outside_window: 15 flagged outside the window (FY2010-FY2012); review only, values unchanged
+  WARN  NVDA  W3_coverage_total_debt: missing FY[2017, 2018, 2019]
+  WARN  AMD   W4_ltm_quarters_new_items: latest 4 quarters end 2025-09-27 to 2026-06-27; missing ['pretax_income@2025-12-27', 'depreciation_amortization@2025-09-27', 'depreciation_amortization@2025-12-27', 'depreciation_amortization@2026-03-28', 'depreciation_amortization@2026-06-27']
+  WARN  AVGO  W4_ltm_quarters_new_items: latest 4 quarters end 2025-11-02 to 2026-08-02; missing ['interest_expense@2025-11-02']
+  WARN  AVGO  W3_coverage_depreciation_amortization: missing FY[2020, 2021, 2022]
+  WARN  MRVL  W4_ltm_quarters_new_items: latest 4 quarters end 2025-11-01 to 2026-08-01; missing ['pretax_income@2025-11-01', 'pretax_income@2026-01-31', 'pretax_income@2026-05-02', 'pretax_income@2026-08-01']
+  WARN  MRVL  W3_coverage_total_debt: missing FY[2017, 2018]
+  WARN  MRVL  W3_coverage_depreciation_amortization: missing FY[2018, 2019, 2020, 2021]
+  ... 220/228 checks pass
+  reproducibility: 4/4 fact outputs byte-identical on rerun
+
+==============================================================================
+6. STEP 3b DATABASE BUILD (twice) + IN-DATABASE CHECKS
+==============================================================================
+  Step 3b database: postgres@localhost:5432/nvda_analysis schema analytics
+  schema: ok
+  load: ok
+  views: ok
+  exports: 7 views and 3 queries -> C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\data\clean\step3\exports
+  PASS  DB1_row_counts_match_load_files: companies 8/8; facts 14619/14619; line_items 31/31; market_inputs 9/9; prices 21792/21792; split_factors 3/3
+  PASS  DB2_annual_candidates_agree: 0 with conflicting values; 3 same-value duplicates (dates a few days apart), one kept
+  PASS  DB3_quarterly_candidates_agree: 0 with conflicting values; 21 same-value duplicates (dates a few days apart), one kept
+  PASS  DB4_every_company_has_annual_ratios: 6 companies with ratio rows
+  PASS  DB5_single_cutoff_date: cutoff 2026-11-02
+  PASS  DB6_valuation_for_every_company: AMD:ok AVGO:ok INTC:ok MRVL:ok NVDA:ok QCOM:ok
+  reproducibility: 10/10 exports byte-identical on a second rebuild
+
+==============================================================================
+7. SQL VIEWS vs INDEPENDENT PYTHON RECOMPUTATION (Decimal, relative 1e-9)
+==============================================================================
+  PASS  V1_v_ratios_annual_matches_python: 2925 cells compared, 0 differ; rows SQL 117 / Python 117; 
+  PASS  V1_v_ratios_ltm_matches_python: 4005 cells compared, 0 differ; rows SQL 445 / Python 445; 
+  PASS  V1_v_valuation_cutoff_matches_python: 66 cells compared, 0 differ; rows SQL 6 / Python 6; 
+
+==============================================================================
+8. DATA REVIEW (for sign-off; nothing here changes data)
+==============================================================================
+  NVDA  rows  2311  gaps  53  {'derived_q4': 159, 'derived_quarter': 87, 'derived_sum': 22, 'reported_annual': 268, 'reported_instant': 590, 'reported_quarter': 684, 'reported_ytd': 501}
+  AMD   rows  2403  gaps  48  {'derived_component': 65, 'derived_q4': 97, 'derived_quarter': 124, 'derived_sum': 115, 'reported_annual': 247, 'reported_instant': 721, 'reported_quarter': 602, 'reported_ytd': 432}
+  AVGO  rows  2290  gaps  47  {'declared_zero': 40, 'derived_q4': 115, 'derived_quarter': 136, 'derived_sum': 75, 'reported_annual': 246, 'reported_instant': 561, 'reported_quarter': 650, 'reported_ytd': 467}
+  MRVL  rows  2472  gaps  68  {'declared_zero': 30, 'derived_q4': 175, 'derived_quarter': 131, 'derived_sum': 149, 'reported_annual': 269, 'reported_instant': 603, 'reported_quarter': 636, 'reported_ytd': 479}
+  QCOM  rows  2423  gaps  24  {'derived_component': 129, 'derived_q4': 147, 'derived_quarter': 126, 'derived_sum': 43, 'reported_annual': 267, 'reported_instant': 659, 'reported_quarter': 597, 'reported_ytd': 455}
+  INTC  rows  2720  gaps  28  {'derived_component': 71, 'derived_q4': 196, 'derived_quarter': 151, 'derived_sum': 197, 'reported_annual': 249, 'reported_instant': 790, 'reported_quarter': 574, 'reported_ytd': 492}
+
+  Warnings (report only):
+    WARN AMD   W4_ltm_quarters_new_items: latest 4 quarters end 2025-09-27 to 2026-06-27; missing ['pretax_income@2025-12-27', 'depreciation_amortization@2025-09-27', 'depreciation_amortization@2025-12-27', 'depreciation_amortization@2026-03-28', 'depreciation_amortization@2026-06-27']
+    WARN AVGO  W3_coverage_depreciation_amortization: missing FY[2020, 2021, 2022]
+    WARN AVGO  W4_ltm_quarters_new_items: latest 4 quarters end 2025-11-02 to 2026-08-02; missing ['interest_expense@2025-11-02']
+    WARN MRVL  W3_coverage_depreciation_amortization: missing FY[2018, 2019, 2020, 2021]
+    WARN MRVL  W3_coverage_total_debt: missing FY[2017, 2018]
+    WARN MRVL  W4_ltm_quarters_new_items: latest 4 quarters end 2025-11-01 to 2026-08-01; missing ['pretax_income@2025-11-01', 'pretax_income@2026-01-31', 'pretax_income@2026-05-02', 'pretax_income@2026-08-01']
+    WARN NVDA  W1_scale_anomalies_outside_window: 15 flagged outside the window (FY2010-FY2012); review only, values unchanged
+    WARN NVDA  W3_coverage_total_debt: missing FY[2017, 2018, 2019]
+  Error-level checks passing: 156/156
+
+  Valuation at the cutoff ($ millions; multiples are times):
+    ticker  market cap          EV   LTM rev    LTM NI     P/E  EV/Rev EV/EBITDA  EBITDA basis
+    AMD        762,105     752,220    41,305     6,434   118.4    18.2     112.3  latest fiscal year FY2025 (quarterly D&A incomplete)
+    AVGO     1,538,207   1,573,651    89,104    38,265    40.2    17.7      30.6  LTM 2026-08-02
+    INTC       318,741     314,870    59,892   -12,032       -     5.3      21.9  LTM 2026-09-26
+    MRVL       150,309     151,340     9,450     2,640    56.9    16.0      53.6  LTM 2026-08-01
+    NVDA     4,869,646   4,846,426   302,969   192,879    25.2    16.0      24.1  LTM 2026-07-26
+    QCOM       170,184     177,150    44,069     9,259    18.4     4.0      15.0  LTM 2026-06-28
+
+  q1_highest_3y_avg_roe:
+    ticker,latest_fiscal_year,roe_3y_avg_pct
+    AMD,2025,3.9
+    AVGO,2025,34.7
+    INTC,2025,-5.6
+    MRVL,2026,2.3
+    NVDA,2026,104.0
+    QCOM,2025,34.1
+
+  q2_gross_margin_vs_peer_median:
+    ticker,fiscal_year,gross_margin_pct,peer_median_pct,gap_vs_peer_median_pp
+    NVDA,2026,71.1,51.0,20.1
+    AVGO,2025,67.8,51.0,16.7
+    QCOM,2025,55.4,51.0,4.4
+    MRVL,2026,51.0,51.0,0.0
+    AMD,2025,49.5,51.0,-1.5
+    INTC,2025,34.8,51.0,-16.3
+
+  q3_nvda_fcf_vs_net_income:
+    fiscal_year,net_income,fcf,fcf_conversion_pct
+    2017,1666,,
+    2018,3047,,
+    2019,4141,,
+    2020,2796,,
+    2021,4332,,
+    2022,9752,8132,83.4
+    2023,4368,3808,87.2
+
+==============================================================================
+9. RECONCILIATION (Step 2 and Step 3 filing references, reported ratios, SQL vs Python)
+==============================================================================
+  .........                                                                [100%]
+  9 passed, 90 deselected in 1.56s
+
+==============================================================================
+10. GIT READINESS (nothing is committed by this script)
+==============================================================================
+  identity set; files to commit: 25
+    README.md
+    docs/data_dictionary.md
+    docs/decision_log.md
+    docs/issue_log.md
+    pytest.ini
+    config/database.yaml
+    config/manual_facts.csv
+    config/step3.yaml
+    docs/m3_acceptance.md
+    python/m3_check.py
+    python/run_step3.py
+    python/step3_db.py
+    python/step3_facts.py
+    python/step3_reference.py
+    sql/checks.sql
+    sql/queries/q1_highest_3y_avg_roe.sql
+    sql/queries/q2_gross_margin_vs_peer_median.sql
+    sql/queries/q3_nvda_fcf_vs_net_income.sql
+    sql/schema.sql
+    sql/views.sql
+    tests/fixtures/ratio_reference_values.csv
+    tests/fixtures/reference_values_step3.csv
+    tests/test_db_step3.py
+    tests/test_reconciliation_step3.py
+    tests/test_step3.py
+  raw collections and data/clean outputs ignored by Git: yes
+  e-mail or stored password in files to commit: none
+
+==============================================================================
+11. STEP 3 ACCEPTANCE SUMMARY
+==============================================================================
+  [T] PASS    Environment, pins and lock file
+  [T] PASS    All expected files present
+  [T] PASS    PostgreSQL client found, server reachable and new enough
+  [T] PASS    Offline test suite passes
+  [T] PASS    Facts stage: every error-level check passes
+  [T] PASS    Facts rerun is byte-identical
+  [T] PASS    Database builds; DB1-DB6 pass
+  [T] PASS    Second rebuild gives byte-identical exports
+  [V] PASS    Validation has no failing error-level check
+  [V] PASS    Every SQL ratio equals the Python recomputation
+  [V] PASS    Filing references, reported ratios and Step 2 references tie
+  [V] MANUAL  Warnings, definitions and open decision S3-D12 reviewed
+  [S] FAIL    Git identity set, no unexpected files, outputs ignored, no secrets
+  [S] MANUAL  Decisions accepted and Step 3 commit made
+
+  Outstanding before sign-off: Git identity set, no unexpected files, outputs ignored, no secrets

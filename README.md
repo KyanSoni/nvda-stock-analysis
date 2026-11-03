@@ -31,6 +31,12 @@ $env:SEC_USER_AGENT = "Your Name your-email@example.com"
 & $vpy python\fetch_step2.py --add-rates <id>     # add the 10-year yield if FRED timed out
 & $vpy python\run_step2.py                        # process the latest collection offline -> data\clean\step2
 & $vpy python\m2_check.py                         # every Step 2 check in one go -> data\clean\step2\m2_check_report.txt
+
+# Step 3 (PostgreSQL 13+; password only in the session, never in a file)
+$env:PGPASSWORD = "<postgres password>"
+& $vpy python\run_step3.py all                    # facts + database + exports -> data\clean\step3
+& $vpy -m pytest -m db                            # database tests (rebuild the analytics schema)
+& $vpy python\m3_check.py                         # every Step 3 check in one go -> data\clean\step3\m3_check_report.txt
 ```
 
 ## Layout
@@ -38,12 +44,14 @@ $env:SEC_USER_AGENT = "Your Name your-email@example.com"
 |---|---|
 | `config/project.yaml` | Company, SEC settings, the 12 line items and their candidate XBRL concepts |
 | `config/universe.yaml` | Step 2 companies, predecessors, fallbacks, derivations, market settings |
-| `python/` | M1: `fetch_sec.py`, `parse_companyfacts.py`, `select_facts.py`, `validate_m1.py`, `run_m1.py`, `m1_check.py`; Step 2: `fetch_step2.py`, `step2_sec.py`, `step2_market.py`, `run_step2.py`, `m2_check.py` |
+| `config/step3.yaml`, `config/manual_facts.csv`, `config/database.yaml` | Step 3 line items and derivations, manual facts (empty), PostgreSQL connection (no password) |
+| `sql/` | `schema.sql`, `views.sql`, `checks.sql`, `queries/` |
+| `python/` | M1: `fetch_sec.py`, `parse_companyfacts.py`, `select_facts.py`, `validate_m1.py`, `run_m1.py`, `m1_check.py`; Step 2: `fetch_step2.py`, `step2_sec.py`, `step2_market.py`, `run_step2.py`, `m2_check.py`; Step 3: `step3_facts.py`, `run_step3.py`, `step3_db.py`, `step3_reference.py`, `m3_check.py` |
 | `tests/` | Offline unit, contract and reproducibility tests; live and reconciliation tests on request |
 | `data/raw/sec/` | M1 companyfacts snapshots and fetch manifest (not in Git) |
 | `data/raw/collections/` | Step 2 collections, one dated folder per download run (not in Git) |
 | `data/clean/` | Pipeline outputs (not in Git) |
-| `docs/` | Decision log, issue log, M1 acceptance checklist, data dictionary |
+| `docs/` | Decision log, issue log, M1–M3 acceptance checklists, data dictionary, evidence |
 
 ## Universe
 Target NVDA. Peers AMD, AVGO, MRVL, QCOM, INTC. Benchmarks SPY, SOXX.

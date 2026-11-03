@@ -1,0 +1,71 @@
+# Step 3a: extended line items (S3-D1), split adjustment (S3-D2) and manual facts (S3-D9).
+# Everything here is selected with the M1/M2 rules from the same Step 2 collection. Concept lists come from the
+# availability survey of 2026-11-03 (issue I-33); changing anything here is a decision - log it.
+
+line_items:                       # added to the 12 M1 line items for every company
+  current_assets:      {statement: BS, period_type: instant,  unit: USD, candidates: [AssetsCurrent], derive_q4: false}
+  current_liabilities: {statement: BS, period_type: instant,  unit: USD, candidates: [LiabilitiesCurrent], derive_q4: false}
+  inventory:           {statement: BS, period_type: instant,  unit: USD, candidates: [InventoryNet], derive_q4: false}
+  st_investments:      {statement: BS, period_type: instant,  unit: USD, derive_q4: false,
+                        candidates: [MarketableSecuritiesCurrent, ShortTermInvestments,
+                                     AvailableForSaleSecuritiesDebtSecuritiesCurrent, AvailableForSaleSecuritiesCurrent,
+                                     DebtSecuritiesCurrent]}   # NVDA from FY2026: 'Marketable debt securities' (equity securities excluded, I-37)
+  total_debt:          {statement: BS, period_type: instant,  unit: USD, candidates: [], derive_q4: false}   # always derived
+  income_tax:          {statement: IS, period_type: duration, unit: USD, candidates: [IncomeTaxExpenseBenefit], derive_q4: true}
+  pretax_income:       {statement: IS, period_type: duration, unit: USD, derive_q4: true,
+                        candidates: [IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest,
+                                     IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments]}
+  interest_expense:    {statement: IS, period_type: duration, unit: USD, derive_q4: true,
+                        candidates: [InterestExpense, InterestExpenseNonoperating, InterestExpenseDebt]}
+  sbc:                 {statement: CF, period_type: duration, unit: USD, candidates: [ShareBasedCompensation], derive_q4: true}
+  depreciation_amortization: {statement: CF, period_type: duration, unit: USD, candidates: [], derive_q4: true}  # per company below
+
+support_items:                    # inputs to derivations, written with support_item=True
+  debt_current:     {statement: BS, period_type: instant, unit: USD, derive_q4: false,
+                     candidates: [DebtCurrent, LongTermDebtCurrent, LongTermDebtAndCapitalLeaseObligationsCurrent, ShortTermBorrowings]}
+  debt_noncurrent:  {statement: BS, period_type: instant, unit: USD, derive_q4: false,
+                     candidates: [LongTermDebtNoncurrent, LongTermDebtAndCapitalLeaseObligations]}
+  depreciation:     {statement: CF, period_type: duration, unit: USD, candidates: [Depreciation], derive_q4: true}
+  amortization_intangibles: {statement: CF, period_type: duration, unit: USD, candidates: [AmortizationOfIntangibleAssets], derive_q4: true}
+  da_base:          {statement: CF, period_type: duration, unit: USD, candidates: [], derive_q4: true}
+  ni_to_common:     {statement: IS, period_type: duration, unit: USD, derive_q4: false,     # used only by check C19
+                     candidates: [NetIncomeLossAvailableToCommonStockholdersDiluted, NetIncomeLossAvailableToCommonStockholdersBasic]}
+
+# Sums: target = sum of the terms for each period where every required term has a value (same start and end).
+derivations:
+  total_debt_sum:   {target: total_debt, terms: [debt_current, debt_noncurrent]}
+  da_dep_plus_amort: {target: depreciation_amortization, terms: [depreciation, amortization_intangibles]}
+  da_base_plus_amort: {target: depreciation_amortization, terms: [da_base, amortization_intangibles]}
+
+companies:
+  NVDA:
+    candidates:  {depreciation_amortization: [DepreciationDepletionAndAmortization, DepreciationAndAmortization]}
+    derived: [total_debt_sum]
+  AMD:
+    candidates:
+      da_base: [DepreciationDepletionAndAmortization, OtherDepreciationAndAmortization]
+      amortization_intangibles: [AdjustmentForAmortization]
+    derived: [total_debt_sum, da_base_plus_amort]
+    # Acquired-intangible amortisation starts with Xilinx (FY2022); FY2016-17 report it as 0 (S3-D10, I-35)
+    optional_zero_terms: {da_base_plus_amort: {amortization_intangibles: {through_fiscal_year: 2021}}}
+  AVGO:
+    candidates:  {depreciation_amortization: [DepreciationDepletionAndAmortization]}
+    derived: [total_debt_sum, da_dep_plus_amort]
+    declared_zero: {st_investments: {from_fiscal_year: 2016, evidence: "Broadcom balance sheets present no short-term investments line (FY2025 10-K checked)"}}
+  MRVL:
+    candidates:  {da_base: [OtherDepreciationAndAmortization, DepreciationAndAmortization]}
+    derived: [total_debt_sum, da_base_plus_amort]
+    declared_zero: {st_investments: {from_fiscal_year: 2019, evidence: "Marvell balance sheets present no short-term investments line from FY2019 (FY2026 10-K checked)"}}
+  QCOM:
+    candidates:
+      depreciation_amortization: [DepreciationDepletionAndAmortization]
+      debt_noncurrent: [LongTermDebtNoncurrent, LongTermDebtAndCapitalLeaseObligations, LongTermDebt]   # LongTermDebt = noncurrent line FY2016-17 (equal in FY2018-25)
+    derived: [total_debt_sum]
+  INTC:
+    derived: [total_debt_sum, da_dep_plus_amort]
+
+split_adjusted_items: [eps_diluted, shares_diluted]      # S3-D2 (D20)
+ltm_required_new_items: []        # S3-D11: new flows are LTM-reported as warnings (W4); valuation falls back to the latest FY
+manual_facts_file: config/manual_facts.csv               # S3-D9
+paths:
+  step3_out: data/clean/step3
