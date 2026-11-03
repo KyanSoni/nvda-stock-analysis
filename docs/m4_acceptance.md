@@ -29,7 +29,7 @@ estimates and exports byte-identical on rerun; V2 306 cells equal. NVIDIA 18/20 
 ## S — sign-off (Kyan)
 - [x] S4-D2 to S4-D8 accepted in `decision_log.md` (D13 and D14 now confirmed; recommendations taken as analyst, confirmed by the commit)
 - [x] Excel tab `Scorecard` built from `data\clean\step4\exports\v_scorecard.csv` (guide Step 4.4)
-- [ ] `m4_check_report.txt` saved as `docs\evidence\m4_check_report_<date>.txt`
+- [x] `m4_check_report.txt` saved as `docs\evidence\m4_check_report_<date>.txt`
 - [ ] Step 4 commit made
 - [ ] Approval to start Step 5
 
