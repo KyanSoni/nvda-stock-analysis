@@ -30,8 +30,8 @@ m5_check all PASS except MANUAL items. Excel checks done by Kyan (Cover OK for N
 
 ## S — sign-off (Kyan)
 - [x] S5-D1, S5-D3 driver values, S5-D5 to S5-D8 accepted in `decision_log.md`
-- [ ] `m5_check_report.txt` saved as `docs\evidence\m5_check_report_<date>.txt`
-- [ ] Step 5 commit made
+- [x] `m5_check_report.txt` saved as `docs\evidence\m5_check_report_<date>.txt`
+- [x] Step 5 commit made
 - [ ] Approval to start Step 6
 
 Signed off by: ____________  Date: ____________
