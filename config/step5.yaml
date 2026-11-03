@@ -1,0 +1,34 @@
+# Step 5a: line items the forecast model needs (S5-D1), selected with the M1/M2 rules from the signed-off Step 2
+# collection. Concept lists come from the availability survey of 2026-11-03 (issue I-51); changing anything here is
+# a decision - log it. Annual values only: the model is annual.
+
+line_items:
+  cost_of_revenue:     {statement: IS, period_type: duration, unit: USD, candidates: [CostOfRevenue, CostOfGoodsAndServicesSold]}
+  rd_expense:          {statement: IS, period_type: duration, unit: USD, candidates: [ResearchAndDevelopmentExpense]}
+  sga_expense:         {statement: IS, period_type: duration, unit: USD, candidates: [SellingGeneralAndAdministrativeExpense]}
+  interest_income:     {statement: IS, period_type: duration, unit: USD, candidates: [InvestmentIncomeInterest, InvestmentIncomeInterestAndDividend]}
+  accounts_receivable: {statement: BS, period_type: instant,  unit: USD, candidates: [AccountsReceivableNetCurrent]}
+  accounts_payable:    {statement: BS, period_type: instant,  unit: USD, candidates: [AccountsPayableCurrent]}
+  ppe_net:             {statement: BS, period_type: instant,  unit: USD, candidates: [PropertyPlantAndEquipmentNet]}
+  buybacks:            {statement: CF, period_type: duration, unit: USD, candidates: [PaymentsForRepurchaseOfCommonStock]}
+  dividends:           {statement: CF, period_type: duration, unit: USD,
+                        candidates: [PaymentsOfDividends, PaymentsOfDividendsCommonStock, PaymentsOfOrdinaryDividends]}
+  datacenter_revenue:  {statement: IS, period_type: duration, unit: USD, candidates: []}   # NVIDIA only, manual from 10-K (S5-D2)
+
+# Guarded fallbacks: used only for periods where the guard concepts have no value (same rule as M2-D11)
+guarded_fallbacks:
+  INTC:
+    ppe_net: {concept: PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization,
+              guard_zero_or_absent: [PropertyPlantAndEquipmentNet]}
+
+# Per-company candidate order (replaces the default list): QCOM's balance-sheet line "Accounts receivable, net" (4,315 at
+# FY2025) is tagged AccountsAndOtherReceivablesNetCurrent; AccountsReceivableNetCurrent (2,855) is a note detail (I-52)
+company_candidates:
+  QCOM:
+    accounts_receivable: [AccountsAndOtherReceivablesNetCurrent, AccountsReceivableNetCurrent]
+
+history_years: 5            # the model shows the latest 5 fiscal years of each company
+required_complete: [NVDA]   # missing history for these tickers is an error; for the others a warning (shown on the Cover tab)
+manual_facts_file: config/manual_facts_step5.csv
+paths:
+  step5_out: data/clean/step5

@@ -130,3 +130,19 @@ Built from the Step 3 schema plus one consensus snapshot in `data/raw/estimates/
 | `m4_check_report.txt` | Full Step 4 status report from `python/m4_check.py` |
 
 Database additions (schema `analytics`): tables `scorecard_rules`, `scorecard_params`, `estimates`; views `v_latest_annual`, `v_beta`, `v_wacc`, `v_peg`, `v_scorecard_metrics`, `v_scorecard_detail`, `v_scorecard`. Rebuilding Step 3 (`run_step3.py db`) drops them; rerun `run_step4.py db` afterwards.
+
+# Step 5 outputs (`data/clean/step5/`, `excel/NVDA_Forecast.xlsx`)
+
+| File | Contents |
+|---|---|
+| `facts_model.csv` | Every selected value for the Step 5 line items (M1 columns + provenance; NVIDIA Data Center rows are `manual_from_filing`) |
+| `model_data.csv` | One row per company, line item and fiscal year (latest 5): `value_m` in USD millions (EPS USD, shares millions) and `source` (Step 3 view, concept + accession, manual accession, or derived) |
+| `validation_step5.csv` | F1 manual facts valid; F2 model history complete (NVIDIA error, peers warning); F3 gross-profit identity (NVIDIA) |
+| `assumptions.csv` | One row per company, driver and scenario: Y1–Y5, reason, source (`config/model.yaml` for NVIDIA, generated for peers) |
+| `forecast.csv` | The Python model's output: every forecast row, Y1–Y5, for each company and scenario (what the workbook is checked against) |
+| `manifest_<stage>.json` | Output hashes and check results |
+| `m5_check_report.txt` | Full Step 5 status report from `python/m5_check.py` |
+
+**Workbook** (`excel/NVDA_Forecast.xlsx`, rebuilt by `run_step5.py model`): Cover (Ticker `C5`, Scenario `C6` 1 Bear / 2 Base / 3 Bull, key outputs, consensus, balance check) · Assumptions (per driver: Bear, Base, Bull, Selected = CHOOSE(Scenario,…), reason) · Historicals (latest 5 fiscal years, derived lines, history drivers) · IS · BS (balance check row) · CF · Schedules (working capital, PP&E, debt, equity, shares, cash) · Data and AssumptionsData (inputs, blue; regenerated). Units USD millions; rates as fractions shown as %.
+
+Forecast equations (each year t; "opening" = year t−1): segment A/B = opening × (1 + growth); revenue = A + B; cost of revenue = revenue × (1 − gross margin); R&D, SG&A, other opex = revenue × %; EBIT = gross profit − opex; interest income = yield × opening cash and investments; interest expense = rate × opening debt; tax = pre-tax × rate; receivables = revenue × DSO/365; inventory and payables = cost of revenue × DIO or DPO/365; PP&E = opening + capex − D&A; equity = opening + net income + SBC − buybacks − dividends; buybacks = max(FCF, 0) × %; dividends = max(net income, 0) × payout; cash = opening + FCF − buybacks − dividends + net debt issuance. Checks added in Step 5: F1–F3, X1 (workbook = Python model), X2 (balance in every year).

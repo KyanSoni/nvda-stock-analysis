@@ -1,0 +1,135 @@
+M5 CHECK REPORT 2026-11-03T22:00:37+00:00 project C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis
+
+==============================================================================
+1. ENVIRONMENT
+==============================================================================
+Python 3.14.8 (C:\Users\kyans\AppData\Local\venvs\nvda-stock-analysis\Scripts\python.exe)
+  requests  pinned 2.34.2   installed 2.34.2   OK
+  pandas    pinned 3.1.0    installed 3.1.0    OK
+  pytest    pinned 9.1.1    installed 9.1.1    OK
+  PyYAML    pinned 6.0.3    installed 6.0.3    OK
+  yfinance  pinned 1.7.0    installed 1.7.0    OK
+  openpyxl  pinned 3.1.5    installed 3.1.5    OK
+Venv OK; lock file OK
+
+==============================================================================
+2. PROJECT FILES
+==============================================================================
+Expected files present: 96/96
+
+==============================================================================
+3. OFFLINE TESTS
+==============================================================================
+  ........................................................................ [ 64%]
+  .......................................                                  [100%]
+  111 passed, 22 deselected in 12.24s
+
+==============================================================================
+4. STEP 5 PIPELINE + REPRODUCIBILITY
+==============================================================================
+  Step 5a model line items from collection 20261102T230040Z -> C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\data\clean\step5
+  Step 5b assumptions, forecast and workbook -> C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\data\clean\step5, C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\excel\NVDA_Forecast.xlsx
+  PASS  ALL   F1_manual_facts_valid: valid
+  WARN  AMD   F2_model_history_complete: FY2021-FY2025; missing ['interest_income FY2021', 'interest_income FY2022', 'interest_income FY2023', 'interest_income FY2024', 'interest_income FY2025', 'dividends FY2021', 'dividends FY2022', 'dividends FY2023', 'dividends FY2024', 'dividends FY2025']
+  WARN  AVGO  F2_model_history_complete: FY2021-FY2025; missing ['depreciation_amortization FY2021', 'depreciation_amortization FY2022', 'interest_income FY2021', 'interest_income FY2022', 'interest_income FY2023', 'interest_income FY2024', 'interest_income FY2025']
+  WARN  INTC  F2_model_history_complete: FY2021-FY2025; missing ['buybacks FY2024', 'buybacks FY2025']
+  WARN  MRVL  F2_model_history_complete: FY2022-FY2026; missing ['interest_income FY2022', 'interest_income FY2023', 'interest_income FY2024', 'interest_income FY2025', 'interest_income FY2026']
+  PASS  NVDA  F2_model_history_complete: FY2022-FY2026; missing none
+  PASS  QCOM  F2_model_history_complete: FY2021-FY2025; missing none
+  PASS  NVDA  F3_gross_profit_identity: revenue - cost of revenue = gross profit; fails none
+  PASS  ALL   X2_engine_balances_every_year: 18 cases x 5 years; largest |assets - (liabilities + equity)| = 1.00e-21; failing none
+  ... 5/9 checks pass
+  reproducibility: 5/5 CSV outputs byte-identical on rerun (the workbook carries a save time, so it is checked by content below)
+
+==============================================================================
+5. WORKBOOK vs PYTHON MODEL (LibreOffice recalculation, all tickers x scenarios)
+==============================================================================
+  MANUAL  X1_excel_matches_python: SKIPPED: LibreOffice not found; open the workbook in Excel and check Cover shows OK
+
+==============================================================================
+6. NVIDIA FORECAST REVIEW (for sign-off; nothing here changes data)
+==============================================================================
+  Bear:
+                               FY2027E     FY2028E     FY2029E     FY2030E     FY2031E
+    Revenue $m                 385,055     458,069     415,899     397,409     409,331
+    Operating income $m        251,056     280,338     235,815     213,409     214,899
+    Net income $m              206,979     233,555     200,736     186,005     190,528
+    Diluted EPS $                 8.47        9.58        8.26        7.68        7.89
+    Free cash flow $m          163,510     217,437     214,169     194,216     191,554
+    Balance check            -0.000000    0.000000    0.000000   -0.000000   -0.000000
+  Base:
+                               FY2027E     FY2028E     FY2029E     FY2030E     FY2031E
+    Revenue $m                 411,573     691,888     860,160     962,001   1,019,721
+    Operating income $m        271,638     455,954     554,803     606,061     628,148
+    Net income $m              226,827     382,991     470,441     520,228     546,865
+    Diluted EPS $                 9.33       15.88       19.66       21.91       23.22
+    Free cash flow $m          195,235     331,770     443,861     508,575     545,108
+    Balance check             0.000000    0.000000    0.000000    0.000000   -0.000000
+  Bull:
+                               FY2027E     FY2028E     FY2029E     FY2030E     FY2031E
+    Revenue $m                 419,766     756,675   1,013,995   1,193,586   1,312,139
+    Operating income $m        280,404     509,242     681,405     792,541     860,763
+    Net income $m              237,132     432,638     582,876     684,357     751,542
+    Diluted EPS $                 9.79       18.08       24.65       29.30       32.57
+    Free cash flow $m          214,863     380,465     549,133     666,956     747,041
+    Balance check             0.000000    0.000000    0.000000    0.000000   -0.000000
+  Base vs consensus (Step 4 snapshot):
+    FY2027E: revenue 411,573 vs 411,653; EPS 9.33 vs 9.31 (consensus EPS is usually adjusted, I-47)
+    FY2028E: revenue 691,888 vs 692,206; EPS 15.88 vs 15.91 (consensus EPS is usually adjusted, I-47)
+  Warnings (peer history gaps, treated as 0 in the model and shown on the Cover tab):
+    WARN AMD   FY2021-FY2025; missing ['interest_income FY2021', 'interest_income FY2022', 'interest_income FY2023', 'interest_income FY2024', 'interest_income FY202
+    WARN AVGO  FY2021-FY2025; missing ['depreciation_amortization FY2021', 'depreciation_amortization FY2022', 'interest_income FY2021', 'interest_income FY2022', 'i
+    WARN INTC  FY2021-FY2025; missing ['buybacks FY2024', 'buybacks FY2025']
+    WARN MRVL  FY2022-FY2026; missing ['interest_income FY2022', 'interest_income FY2023', 'interest_income FY2024', 'interest_income FY2025', 'interest_income FY202
+
+==============================================================================
+7. RECONCILIATION (all steps: filing references, consensus anchor, workbook vs model)
+==============================================================================
+  .............s                                                           [100%]
+  =========================== short test summary info ===========================
+  SKIPPED [1] tests\test_reconciliation_step5.py:55: LibreOffice not installed: open excel\NVDA_Forecast.xlsx in Excel and check Cover shows OK (MANUAL in m5_acceptance)
+  13 passed, 1 skipped, 119 deselected in 6.59s
+
+==============================================================================
+10. GIT READINESS (nothing is committed by this script)
+==============================================================================
+  identity set; files to commit: 20
+    README.md
+    docs/data_dictionary.md
+    docs/decision_log.md
+    docs/issue_log.md
+    requirements-lock.txt
+    requirements.txt
+    config/manual_facts_step5.csv
+    config/model.yaml
+    config/step5.yaml
+    docs/m5_acceptance.md
+    excel/NVDA_Forecast.xlsx
+    python/build_model.py
+    python/m5_check.py
+    python/run_step5.py
+    python/step5_check.py
+    python/step5_facts.py
+    python/step5_model.py
+    tests/fixtures/reference_values_step5.csv
+    tests/test_reconciliation_step5.py
+    tests/test_step5.py
+  raw collections and data/clean outputs ignored by Git: yes
+  e-mail or stored password in files to commit: none
+
+==============================================================================
+9. STEP 5 ACCEPTANCE SUMMARY
+==============================================================================
+  [T] PASS    Environment, pins and lock file
+  [T] PASS    All expected files present
+  [T] PASS    Offline test suite passes
+  [T] PASS    Step 5 pipeline: every error-level check passes
+  [T] PASS    CSV outputs byte-identical on rerun
+  [V] PASS    Balance sheet balances, 6 companies x 3 scenarios x 5 years (X2)
+  [V] MANUAL  Workbook equals the Python model (LibreOffice) - or MANUAL: open in Excel
+  [V] PASS    Filing references, consensus anchor and earlier references tie
+  [V] MANUAL  Assumptions and forecast reviewed; workbook opened, ticker and scenario flipped
+  [S] PASS    Git identity set, no unexpected files, outputs ignored, no secrets
+  [S] MANUAL  Decisions accepted and Step 5 commit made
+
+  Outstanding before sign-off: only the MANUAL items

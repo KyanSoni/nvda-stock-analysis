@@ -21,8 +21,8 @@ A decision changes only through a new dated entry here; definitions are never ch
 | D12 | Valuation cutoff = latest completed trading day before data collection; actual date recorded; same cutoff for all market inputs | Confirmed | 2026-10-26 |
 | D13 | Source for NTM estimates, or LTM-only comps | Confirmed — yfinance (Yahoo Finance) consensus snapshot with provenance, cross-checked against a second public source (S4-D1, S4-D2); Kyan's choice | 2026-11-03 |
 | D14 | Exact scorecard formulas (ROIC, net debt incl. leases?, PEG growth) | Confirmed — ROIC and net debt as Step 3 (leases excluded, I-41); forward PEG per S4-D3; scoring rules S4-D7 | 2026-11-03 |
-| D15 | Revenue modelled at total or segment level | Open (blocks Phase 5) | |
-| D16 | Scenario drivers, WACC inputs, scenario weights, DCF/comps blend | Open (blocks Phases 5–7) | |
+| D15 | Revenue modelled at total or segment level | Confirmed — two segments for NVIDIA (Data Center, Edge Computing), single line for peers (S5-D2); Kyan's choice | 2026-11-03 |
+| D16 | Scenario drivers, WACC inputs, scenario weights, DCF/comps blend | Part confirmed — scenario drivers: consensus-anchored base (S5-D3, Kyan's choice); WACC inputs, scenario weights and the DCF/comps blend open for Steps 6–7 | 2026-11-03 |
 | D17 | Merged into D2 | Closed | 2026-10-26 |
 | D18 | Python 3.14.8 (python.org), fresh venv at `%LOCALAPPDATA%\venvs\nvda-stock-analysis`, exact pins; old venv not reused | Confirmed | 2026-10-26 |
 | D19 | GitHub repository name and visibility | Open (blocks first push, not M1) | |
@@ -109,4 +109,20 @@ definitions follow the recommendations in the Step 4 plan and become confirmed b
 | S4-D6 | Provisional WACC = E/(D+E)·Ke + D/(D+E)·Kd·(1 − t). Ke = rf + β·ERP; Kd = latest fiscal-year interest expense ÷ average total debt (that and the prior fiscal year-end); t = `tax_rate_used`; E = market cap at the cutoff; D = book total debt at the valuation balance-sheet date. Step 6 revisits every input (I-48) | Confirmed | 2026-11-03 |
 | S4-D7 | Scoring: thresholds from the guide in `config/scorecard.yaml`; pass is strict (`>` or `<`), near miss inclusive (`>=` or `<=`); fundamentals from each company's latest fiscal year, valuation at the cutoff; gross margin compared with the median of the other five companies; a missing input is "not scored" (lowers the maximum) unless the rule says it is a fail: loss-making P/E, net income ≤ 0 for FCF conversion, EBITDA ≤ 0 for net debt/EBITDA, non-positive PEG | Confirmed | 2026-11-03 |
 | S4-D8 | Estimates are fetched after the valuation cutoff (consensus cannot be retrieved as of a past date); allowed up to 7 days after it (check E2), with the fetch time on every row. A deviation from D12, accepted for estimates only | Confirmed | 2026-11-03 |
+
+## Step 5 / M5 decisions (3-statement forecast model)
+
+Kyan chose two segments (D15), a consensus-anchored base case (D16) and a Python-generated workbook on 2026-11-03.
+The rest follow the Step 5 plan and become confirmed by Kyan's Step 5 commit.
+
+| ID | Decision | Status | Date |
+|---|---|---|---|
+| S5-D1 | Model line items (`config/step5.yaml`): cost of revenue, R&D, SG&A, interest income, receivables, payables, PP&E, buybacks, dividends; selected with the M1/M2 rules from the signed-off collection. Guarded fallback: INTC PP&E incl. finance-lease ROU where `PropertyPlantAndEquipmentNet` is absent. QCOM receivables from `AccountsAndOtherReceivablesNetCurrent`, the concept on its balance-sheet line (I-52) | Confirmed | 2026-11-03 |
+| S5-D2 (D15) | Revenue by segment for NVIDIA: Data Center = the 10-K "Data Center" market platform, entered as `manual_from_filing` for FY2022–FY2026 (`config/manual_facts_step5.csv`, FY2024 and FY2026 10-Ks); Edge Computing = total revenue − Data Center, labelled derived (matches NVIDIA's FY2027 presentation: Q2 FY2026 Data Center 41,096 + Edge 5,647 = 46,743). Peers: one revenue line (segment A = total) | Confirmed (Kyan) | 2026-11-03 |
+| S5-D3 (D16) | NVIDIA scenarios in `config/model.yaml`, each driver with a reason and source. Base: FY2027–FY2028 revenue = consensus ($411.7bn, $692.2bn), Data Center growth then fading to 6% by FY2031; Bear: FY2027 = H1 actuals + Q3 guidance low end + flat Q4, then an AI-capex digestion year; Bull: Rubin ramp beats consensus. Margins, opex, tax (16–18% guidance) and capital returns as reasoned per driver | Confirmed (Kyan: consensus anchor; driver values accepted unchanged) | 2026-11-03 |
+| S5-D4 | The model is `excel/NVDA_Forecast.xlsx`, written by `python/build_model.py` with live formulas; inputs only on Data and AssumptionsData (blue); assumptions are edited in `config/model.yaml` and the workbook rebuilt (edits in Excel are overwritten). The Power Query Scorecard workbook `excel/NVDA_Model.xlsx` stays separate | Confirmed (Kyan) | 2026-11-03 |
+| S5-D5 | Simplifications: interest on opening balances (no circularity); other current / non-current assets and other liabilities held flat; all D&A runs through PP&E; other non-operating income (e.g. NVIDIA's equity-investment gains, 9,022 in FY2026) not forecast; equity = prior + net income + SBC − buybacks − dividends; buybacks = share of positive FCF; debt changes only by assumed issuance; cash and short-term investments are one plug line | Confirmed | 2026-11-03 |
+| S5-D6 | Peer assumptions are mechanical, not investment views: years 1–2 revenue growth from consensus, then a linear fade to 5% by year 5 (Bear/Bull ±10pt); gross margin latest year (Bear −2pt, Bull +1pt); every other driver at its latest fiscal-year value. They exist so the ticker switch works and Step 6 can run a simplified peer DCF | Confirmed | 2026-11-03 |
+| S5-D7 | A missing history value for a peer (F2 warning) is 0 in the model and counted on the Cover tab, never estimated; NVIDIA's history must be complete (F2 error) | Confirmed | 2026-11-03 |
+| S5-D8 | Checks: X2 every company × scenario × year balances in the Python model; X1 the workbook, recalculated by LibreOffice, equals the Python model for 19 rows × 5 years × 18 cases (relative 1e-6). Where LibreOffice is not installed X1 is MANUAL: open the workbook in Excel, check Cover shows OK, flip ticker and scenario | Confirmed | 2026-11-03 |
 

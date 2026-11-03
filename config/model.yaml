@@ -1,0 +1,120 @@
+# Step 5b: forecast assumptions (decisions S5-D3 to S5-D7). Five forecast years after each company's latest fiscal
+# year (NVIDIA: FY2027-FY2031). Rates are fractions (0.17 = 17%), days are days, amounts in USD millions.
+# NVIDIA's drivers are argued one by one (reason + source); the peers' are mechanical defaults (peer_defaults below),
+# used only so the ticker switch works and Step 6 can run a simplified peer DCF. Changing a number here is an analyst
+# decision: rebuild with  python python/run_step5.py model  and log anything material in docs/decision_log.md.
+
+forecast_years: 5
+scenarios: [Bear, Base, Bull]
+
+sources:
+  consensus: "Yahoo Finance consensus via yfinance, snapshot 20261103T180459Z (Step 4): FY2027 revenue $411.7bn, FY2028 $692.2bn"
+  q2fy27_release: "NVIDIA Q2 FY2027 results, 26 Aug 2026: Q3 FY2027 outlook revenue $108.0bn +/-2%, GAAP gross margin 74.0% +/-0.5pt, GAAP opex ~$9.2bn; FY2027 tax rate 16-18% (https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000073/q2fy27pr.htm)"
+  q2fy27_10q: "NVIDIA 10-Q for Q2 FY2027 (accession 0001045810-26-000075): H1 FY2027 Data Center revenue $164,269m, Edge Computing $13,568m; proceeds from issuance of debt, net $24,896m (H1); $25.0bn senior notes issued June 2026"
+
+NVDA:
+  datacenter_growth:     # segment A = Data Center
+    Bear: [0.85, 0.20, -0.10, -0.05, 0.03]
+    Base: [0.98, 0.722, 0.25, 0.12, 0.06]
+    Bull: [1.02, 0.85, 0.35, 0.18, 0.10]
+    reason: "Base FY2027-FY2028 set so total revenue equals consensus ($411.7bn, $692.2bn) given the Edge assumption; then a fade as AI capex matures. Bear FY2027 = H1 actuals + Q3 guidance low end + a flat Q4, then a capex digestion year in FY2029. Bull = Vera Rubin ramp beats consensus"
+  edge_growth:           # segment B = Edge Computing
+    Bear: [0.20, 0.05, 0.03, 0.03, 0.03]
+    Base: [0.26, 0.12, 0.10, 0.08, 0.06]
+    Bull: [0.28, 0.15, 0.12, 0.10, 0.08]
+    reason: "H1 FY2027 Edge Computing +28% year on year (10-Q); base keeps that pace for FY2027, then slows toward PC/gaming market growth"
+  gross_margin:
+    Bear: [0.740, 0.710, 0.680, 0.660, 0.650]
+    Base: [0.745, 0.740, 0.730, 0.720, 0.710]
+    Bull: [0.750, 0.750, 0.750, 0.745, 0.740]
+    reason: "Q3 FY2027 guidance 74.0% GAAP; FY2026 was 71.1% (incl. inventory charges). Base drifts down 1pt a year as competition and memory costs bite; bear assumes custom-chip price pressure"
+  rd_pct_revenue:
+    Bear: [0.070, 0.078, 0.090, 0.098, 0.100]
+    Base: [0.068, 0.065, 0.068, 0.072, 0.075]
+    Bull: [0.066, 0.062, 0.063, 0.065, 0.067]
+    reason: "FY2026 8.6% of revenue; Q3 FY2027 GAAP opex guide ~$9.2bn on $108bn (8.5% total opex, ~80% of it R&D). Ratio rises as growth slows because R&D spend is sticky"
+  sga_pct_revenue:
+    Bear: [0.018, 0.020, 0.023, 0.025, 0.025]
+    Base: [0.017, 0.016, 0.017, 0.018, 0.019]
+    Bull: [0.016, 0.015, 0.015, 0.016, 0.017]
+    reason: "FY2026 2.1% of revenue; scale benefit while revenue grows, partly reversed later"
+  other_opex_pct_revenue:
+    Bear: [0, 0, 0, 0, 0]
+    Base: [0, 0, 0, 0, 0]
+    Bull: [0, 0, 0, 0, 0]
+    reason: "NVIDIA's operating income equals gross profit less R&D and SG&A in every history year (no other operating lines)"
+  yield_on_cash:
+    Bear: [0.035, 0.035, 0.035, 0.035, 0.035]
+    Base: [0.040, 0.040, 0.040, 0.040, 0.040]
+    Bull: [0.045, 0.045, 0.045, 0.045, 0.045]
+    reason: "Interest income / opening cash and short-term investments was 5.3% in FY2026; base assumes lower short rates, close to the 10-year Treasury (4.91% at the cutoff) less a term spread"
+  cost_of_debt:
+    Bear: [0.045, 0.045, 0.045, 0.045, 0.045]
+    Base: [0.040, 0.040, 0.040, 0.040, 0.040]
+    Bull: [0.040, 0.040, 0.040, 0.040, 0.040]
+    reason: "FY2026 interest expense / opening debt 3.1% on older low-coupon notes; the $25bn June 2026 notes were issued at today's higher rates"
+  tax_rate:
+    Bear: [0.18, 0.18, 0.18, 0.18, 0.18]
+    Base: [0.17, 0.17, 0.17, 0.17, 0.17]
+    Bull: [0.16, 0.16, 0.16, 0.16, 0.16]
+    reason: "FY2027 guidance 16-18% (Q2 FY2027 release); FY2026 effective rate 15.1%"
+  da_pct_revenue:
+    Bear: [0.016, 0.016, 0.016, 0.016, 0.016]
+    Base: [0.014, 0.014, 0.014, 0.014, 0.014]
+    Bull: [0.013, 0.013, 0.013, 0.013, 0.013]
+    reason: "FY2026 1.3% of revenue (D&A 2,843 / revenue 215,938); rising data-centre and office investment adds a little"
+  capex_pct_revenue:
+    Bear: [0.035, 0.035, 0.035, 0.035, 0.035]
+    Base: [0.030, 0.030, 0.030, 0.030, 0.030]
+    Bull: [0.025, 0.025, 0.025, 0.025, 0.025]
+    reason: "FY2026 2.8% of revenue (6,042); asset-light: TSMC builds the fabs, NVIDIA's capex is buildings, labs and its own clusters"
+  dso_days:
+    Bear: [70, 70, 70, 70, 70]
+    Base: [62, 62, 62, 62, 62]
+    Bull: [58, 58, 58, 58, 58]
+    reason: "FY2026 receivables 38,466 = 65 days of revenue; base assumes slightly faster collection, bear longer hyperscaler terms"
+  dio_days:
+    Bear: [140, 140, 140, 140, 140]
+    Base: [115, 115, 115, 115, 115]
+    Bull: [100, 100, 100, 100, 100]
+    reason: "FY2026 inventory 21,403 = 125 days of cost of revenue, built ahead of the Rubin ramp; base normalises a little"
+  dpo_days:
+    Bear: [50, 50, 50, 50, 50]
+    Base: [57, 57, 57, 57, 57]
+    Bull: [60, 60, 60, 60, 60]
+    reason: "FY2026 payables 9,812 = 57 days of cost of revenue"
+  sbc_pct_revenue:
+    Bear: [0.032, 0.032, 0.032, 0.032, 0.032]
+    Base: [0.028, 0.028, 0.028, 0.028, 0.028]
+    Bull: [0.026, 0.026, 0.026, 0.026, 0.026]
+    reason: "FY2026 3.0% of revenue (6,386); treated as a real cost in net income (D6) and added back in cash flow"
+  buyback_pct_fcf:
+    Bear: [0.40, 0.40, 0.40, 0.40, 0.40]
+    Base: [0.50, 0.50, 0.50, 0.50, 0.50]
+    Bull: [0.60, 0.60, 0.60, 0.60, 0.60]
+    reason: "FY2026 buybacks 40,086 = 41% of FCF (96,676); cash keeps building, so a higher share is likely"
+  dividend_payout:
+    Bear: [0.008, 0.008, 0.008, 0.008, 0.008]
+    Base: [0.008, 0.008, 0.008, 0.008, 0.008]
+    Bull: [0.008, 0.008, 0.008, 0.008, 0.008]
+    reason: "FY2026 dividends 974 = 0.8% of net income; token dividend kept"
+  share_change:
+    Bear: [-0.003, -0.003, -0.003, -0.003, -0.003]
+    Base: [-0.008, -0.008, -0.008, -0.008, -0.008]
+    Bull: [-0.012, -0.012, -0.012, -0.012, -0.012]
+    reason: "Diluted shares fell 0.8% a year FY2022-FY2026 (25,350m to 24,514m, split-adjusted) as buybacks offset SBC dilution"
+  net_debt_issuance:
+    Bear: [24896, 0, 0, 0, 0]
+    Base: [24896, 0, 0, 0, 0]
+    Bull: [24896, 0, 0, 0, 0]
+    reason: "H1 FY2027 net proceeds from debt issuance $24,896m (Q2 FY2027 10-Q); no further issuance or repayment assumed (maturities refinanced)"
+
+peer_defaults:           # S5-D6: mechanical, not argued; reasons are written by the generator
+  terminal_growth: 0.05          # revenue growth fades linearly from the year-2 consensus growth to this by year 5
+  bear_growth_shift: -0.10       # bear = base growth - 10pt each year
+  bull_growth_shift: 0.10
+  bear_margin_shift: -0.02       # gross margin
+  bull_margin_shift: 0.01
+  yield_on_cash: 0.04
+  cost_of_debt_if_unknown: 0.05
+  tax_rate_if_unknown: 0.21
