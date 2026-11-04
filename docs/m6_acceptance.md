@@ -33,8 +33,8 @@ the decision log; new issues I-62, I-63).
 
 ## S — sign-off (Kyan)
 - [x] S6-D1 to S6-D10 accepted in `decision_log.md` (confirmed 2026-11-04)
-- [ ] `m6_check_report.txt` saved as `docs\evidence\m6_check_report_<date>.txt`
+- [x] `m6_check_report.txt` saved as `docs\evidence\m6_check_report_<date>.txt`
 - [x] Step 6 commit made
 - [x] Approval to start Step 7
 
-Signed off by: ____________  Date: ____________
+Signed off by: __Kyan Soni__________  Date: ____2026-11-04_______
