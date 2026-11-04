@@ -53,7 +53,8 @@ def model_stage(out: Path, workbook: Path, excel_check: bool) -> list[tuple]:
                 rows.append([t, s, k] + [f"{float(v):.6f}" for v in vals])
     write_csv(pd.DataFrame(rows, columns=["ticker", "scenario", "row", "y1", "y2", "y3", "y4", "y5"]), out / "forecast.csv", ["ticker", "scenario", "row"])
     meta = {"built": datetime.now(timezone.utc).strftime("%Y-%m-%d"), "cutoff": e4["cutoff"], "snapshot": e4["snapshot_id"]}
-    build_model.build(md, at, est, workbook, meta)
+    import step6_dcf
+    build_model.build(md, at, est, workbook, meta, step6_dcf.payload_or_none(md, at))   # keeps the Step 6 tabs (I-59)
     print(f"Step 5b assumptions, forecast and workbook -> {out}, {workbook}")
     res = [("ALL", *c, "error") for c in step5_check.engine_checks(md, at)]
     if excel_check:

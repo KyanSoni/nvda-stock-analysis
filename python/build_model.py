@@ -3,6 +3,7 @@
 Tabs: Cover (ticker + scenario switch, key outputs, balance check), Assumptions (Bear/Base/Bull/Selected per driver,
 with reasons), Historicals, IS, BS, CF, Schedules (working capital, PP&E, debt, equity, shares, cash), Data and
 AssumptionsData (the inputs, written by this script from model_data.csv and assumptions.csv).
+Step 6 adds WACC, DCF and DcfData (build_dcf.py) when its inputs exist.
 Every forecast cell is a formula; the only typed numbers are the inputs on Data and AssumptionsData (blue).
 The equations are exactly those of step5_model.forecast, which the checks compare against.
 """
@@ -89,7 +90,8 @@ def prev(col: str) -> str:
     return get_column_letter(ord(col) - ord("A"))  # previous column letter (H -> G)
 
 
-def build(md: pd.DataFrame, at: pd.DataFrame, estimates: pd.DataFrame, out: Path, meta: dict) -> Path:
+def build(md: pd.DataFrame, at: pd.DataFrame, estimates: pd.DataFrame, out: Path, meta: dict, dcf: dict | None = None) -> Path:
+    """dcf: the Step 6 payload (step6_dcf.payload); when given, the WACC, DCF and DcfData tabs are added."""
     wb = Workbook()
     cover = wb.active
     cover.title = "Cover"
@@ -420,6 +422,9 @@ def build(md: pd.DataFrame, at: pd.DataFrame, estimates: pd.DataFrame, out: Path
         cover[f"B{rr + 8 + k}"] = n
         cover[f"B{rr + 8 + k}"].font = f(GREY, italic=True, size=9)
     cover.column_dimensions["B"].width = 58
+    if dcf is not None:
+        import build_dcf
+        build_dcf.add(wb, dcf, IS, S, sel)
     for c in "CDEFGH":
         cover.column_dimensions[c].width = 13
     for ws in wb.worksheets:

@@ -1,0 +1,123 @@
+M6 CHECK REPORT 2026-11-04T00:30:48+00:00 project C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis
+
+==============================================================================
+1. ENVIRONMENT
+==============================================================================
+Python 3.14.8 (C:\Users\kyans\AppData\Local\venvs\nvda-stock-analysis\Scripts\python.exe)
+  requests  pinned 2.34.2   installed 2.34.2   OK
+  pandas    pinned 3.1.0    installed 3.1.0    OK
+  pytest    pinned 9.1.1    installed 9.1.1    OK
+  PyYAML    pinned 6.0.3    installed 6.0.3    OK
+  yfinance  pinned 1.7.0    installed 1.7.0    OK
+  openpyxl  pinned 3.1.5    installed 3.1.5    OK
+Venv OK; lock file OK
+
+==============================================================================
+2. PROJECT FILES
+==============================================================================
+Expected files present: 111/111
+
+==============================================================================
+3. OFFLINE TESTS
+==============================================================================
+  ........................................................................ [ 61%]
+  ..............................................                           [100%]
+  118 passed, 25 deselected in 13.49s
+
+==============================================================================
+4. STEP 6 DCF + REPRODUCIBILITY
+==============================================================================
+  Step 6 DCF -> C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\data\clean\step6, C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\excel\NVDA_Forecast.xlsx
+  PASS  ALL   D1_growth_below_wacc: 6 companies; failing none
+  PASS  ALL   D2_scenario_weights_sum_to_1: sum 1.00
+  PASS  ALL   D3_ufcf_recomputed_from_cash_flow: 18 cases x 5 years; largest difference 1.00e-22
+  PASS  ALL   D4_weighted_between_bear_and_bull: failing none
+  WARN  INTC  D5_peer_quality: Y1 tax rate 98% outside 0-35% (history-derived peer default, I-58); negative value: forecast unlevered FCF below zero
+  WARN  QCOM  D5_peer_quality: Y1 tax rate 56% outside 0-35% (history-derived peer default, I-58)
+  NVDA value per share: Bear 66.09, Base 168.42, Bull 226.92; weighted 157.47 vs price 202.06 (-22.1%)
+  ... 4/6 checks pass
+  reproducibility: 6/6 CSV outputs byte-identical on rerun
+
+==============================================================================
+5. WORKBOOK DCF vs PYTHON (LibreOffice recalculation, all tickers x scenarios)
+==============================================================================
+  MANUAL  X3_dcf_excel_matches_python: SKIPPED: LibreOffice not found; open the workbook in Excel, DCF tab must show OK (live value equals Python)
+
+==============================================================================
+6. NVIDIA VALUATION REVIEW (for sign-off; nothing here changes data)
+==============================================================================
+  WACC 13.87% = cost of equity 13.95% (rf 4.91% + beta 1.807 [raw 2.205] x ERP 5.0%); debt weight 0.68%
+  Valuation date 2026-11-02; balance sheet 2026-07-26; year-1 share still to come 56.8%; listed stakes 42,783; diluted shares 24,285m
+    Bear  value/share    66.09  upside  -67.3%  TV share of EV 58%  implied exit EV/EBITDA 7.0x  at peer multiple 167.27
+    Base  value/share   168.42  upside  -16.6%  TV share of EV 67%  implied exit EV/EBITDA 7.2x  at peer multiple 458.58
+    Bull  value/share   226.92  upside  +12.3%  TV share of EV 69%  implied exit EV/EBITDA 7.4x  at peer multiple 620.37
+    Weighted (25/50/25) 157.47 vs price 202.06 (-22.1%)
+  Reverse DCF (Base, one lever at a time):
+    fy2_segment_a_growth   model 72.20%  implied 110.31%  FY2 revenue 838,088 vs 691,888; FY5 revenue 1,236,682 vs 1,019,721
+    terminal_growth        model 3.00%  implied 5.35%  
+    wacc                   model 13.87%  implied 12.05%  
+  WACC x terminal growth (Base, value per share):
+    WACC        g 0.02   g 0.025    g 0.03   g 0.035    g 0.04
+    10.0%       234.30    246.69    260.84    277.17    296.23
+    11.0%       208.28    217.71    228.33    240.36    254.10
+    12.0%       187.51    194.89    203.09    212.26    222.57
+    13.0%       170.56    176.46    182.95    190.12    198.09
+    14.0%       156.47    161.27    166.51    172.24    178.55
+    15.0%       144.59    148.55    152.84    157.50    162.59
+    16.0%       134.42    137.73    141.30    145.15    149.33
+  Peers (mechanical cases, S5-D6 / S6-D7; cross-check only):
+    AMD   WACC 14.87%  weighted    91.38 vs  466.84 (-80%)  
+    AVGO  WACC 11.26%  weighted   312.40 vs  322.23 (-3%)  
+    INTC  WACC 12.67%  weighted    -9.39 vs   59.97 (-116%)  Y1 tax rate 98% outside 0-35% (history-derived peer default, I-58); negative value: forecast unlevered FCF below zero
+    MRVL  WACC 13.99%  weighted    71.07 vs  171.41 (-59%)  
+    NVDA  WACC 13.87%  weighted   157.47 vs  202.06 (-22%)  
+    QCOM  WACC 11.41%  weighted    61.79 vs  162.08 (-62%)  Y1 tax rate 56% outside 0-35% (history-derived peer default, I-58)
+
+==============================================================================
+7. RECONCILIATION (all steps: filing references, consensus anchor, workbook vs model and DCF)
+==============================================================================
+  =========================== short test summary info ===========================
+  SKIPPED [1] tests\test_reconciliation_step5.py:55: LibreOffice not installed: open excel\NVDA_Forecast.xlsx in Excel and check Cover shows OK (MANUAL in m5_acceptance)
+  SKIPPED [1] tests\test_reconciliation_step6.py:54: LibreOffice not installed: open excel\NVDA_Forecast.xlsx in Excel; DCF tab must show OK (MANUAL in m6_acceptance)
+  15 passed, 2 skipped, 126 deselected in 3.68s
+
+==============================================================================
+10. GIT READINESS (nothing is committed by this script)
+==============================================================================
+  identity set; files to commit: 17
+    README.md
+    docs/data_dictionary.md
+    docs/decision_log.md
+    docs/issue_log.md
+    excel/NVDA_Forecast.xlsx
+    python/build_model.py
+    python/run_step5.py
+    config/dcf.yaml
+    docs/m6_acceptance.md
+    python/build_dcf.py
+    python/m6_check.py
+    python/run_step6.py
+    python/step6_check.py
+    python/step6_dcf.py
+    tests/fixtures/reference_values_step6.csv
+    tests/test_reconciliation_step6.py
+    tests/test_step6.py
+  raw collections and data/clean outputs ignored by Git: yes
+  e-mail or stored password in files to commit: none
+
+==============================================================================
+9. STEP 6 ACCEPTANCE SUMMARY
+==============================================================================
+  [T] PASS    Environment, pins and lock file
+  [T] PASS    All expected files present
+  [T] PASS    Offline test suite passes
+  [T] PASS    Step 6 runs: every error-level check passes
+  [T] PASS    CSV outputs byte-identical on rerun
+  [V] PASS    g < WACC, weights sum to 1, unlevered FCF recomputed, weighted within Bear-Bull (D1-D4)
+  [V] MANUAL  Workbook DCF equals Python (LibreOffice) - or MANUAL: DCF tab shows OK in Excel
+  [V] PASS    10-Q references, beta inputs and earlier references tie
+  [V] MANUAL  WACC, valuation, sensitivities and reverse DCF reviewed
+  [S] PASS    Git identity set, no unexpected files, outputs ignored, no secrets
+  [S] MANUAL  Decisions accepted and Step 6 commit made
+
+  Outstanding before sign-off: only the MANUAL items

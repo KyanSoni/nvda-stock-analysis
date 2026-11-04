@@ -1,0 +1,27 @@
+# Step 6: DCF valuation (decisions S6-D1 to S6-D10). Kyan's choices on 2026-11-03: Blume-adjusted beta, perpetuity
+# growth 3% as the headline with an exit-multiple cross-check, scenario weights 25/50/25, NVIDIA's listed equity stakes
+# added at fair value. Rates are fractions; amounts USD millions.
+
+valuation_date_from: step2_cutoff       # 2026-11-02 (D12)
+equity_risk_premium: 0.05               # S4-D5, unchanged
+beta:
+  benchmark: SPY
+  source: "Step 4 v_beta: 60 monthly total returns to Oct 2026"
+  blume_weight: 0.67                    # adjusted = 0.67 x raw + 0.33 x 1.0 (S6-D1)
+  blume_constant: 0.33
+cost_of_debt: "Base-case Y1 interest rate on debt and tax rate from the model's assumptions (config/model.yaml / peer defaults)"
+terminal:
+  growth: 0.03                          # S6-D3 headline: perpetuity growth on year-5 unlevered FCF
+  exit_multiple_source: "median LTM EV/EBITDA of the other peers at the cutoff (Step 3 v_valuation_cutoff), AMD excluded (fiscal-year EBITDA basis, S3-D11)"
+scenario_weights: {Bear: 0.25, Base: 0.50, Bull: 0.25}   # S6-D4
+non_operating_assets:                   # S6-D5: added to equity value, labelled
+  NVDA:
+    marketable_equity_securities:
+      value: 42783
+      source: "NVIDIA 10-Q Q2 FY2027 (accession 0001045810-26-000075), balance sheet: Marketable equity securities, 26 Jul 2026"
+sensitivity:
+  wacc: [0.10, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16]
+  growth: [0.02, 0.025, 0.03, 0.035, 0.04]
+  fy2_growth_shift: [-0.30, -0.20, -0.10, 0.0, 0.10, 0.20]     # added to segment A growth in forecast year 2 (NVIDIA FY2028)
+  gross_margin_shift: [-0.04, -0.02, 0.0, 0.02]                # added to gross margin in every forecast year
+reverse_dcf_driver: datacenter_growth   # Base case, forecast year 2: the growth at which value per share = price

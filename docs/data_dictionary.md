@@ -146,3 +146,24 @@ Database additions (schema `analytics`): tables `scorecard_rules`, `scorecard_pa
 **Workbook** (`excel/NVDA_Forecast.xlsx`, rebuilt by `run_step5.py model`): Cover (Ticker `C5`, Scenario `C6` 1 Bear / 2 Base / 3 Bull, key outputs, consensus, balance check) · Assumptions (per driver: Bear, Base, Bull, Selected = CHOOSE(Scenario,…), reason) · Historicals (latest 5 fiscal years, derived lines, history drivers) · IS · BS (balance check row) · CF · Schedules (working capital, PP&E, debt, equity, shares, cash) · Data and AssumptionsData (inputs, blue; regenerated). Units USD millions; rates as fractions shown as %.
 
 Forecast equations (each year t; "opening" = year t−1): segment A/B = opening × (1 + growth); revenue = A + B; cost of revenue = revenue × (1 − gross margin); R&D, SG&A, other opex = revenue × %; EBIT = gross profit − opex; interest income = yield × opening cash and investments; interest expense = rate × opening debt; tax = pre-tax × rate; receivables = revenue × DSO/365; inventory and payables = cost of revenue × DIO or DPO/365; PP&E = opening + capex − D&A; equity = opening + net income + SBC − buybacks − dividends; buybacks = max(FCF, 0) × %; dividends = max(net income, 0) × payout; cash = opening + FCF − buybacks − dividends + net debt issuance. Checks added in Step 5: F1–F3, X1 (workbook = Python model), X2 (balance in every year).
+
+# Step 6 outputs (`data/clean/step6/`, DCF tabs in `excel/NVDA_Forecast.xlsx`)
+
+Written by `python/run_step6.py` from the Step 5 outputs, Step 3 `v_valuation_cutoff.csv` and `facts_extended.csv`,
+Step 4 `exports/v_beta.csv` and `config/dcf.yaml`. Rates are fractions, amounts USD millions, per-share values USD.
+
+| File | Contents |
+|---|---|
+| `dcf_inputs.csv` | One row per company: valuation date, price, market cap, balance-sheet date, cash, short-term investments, debt, listed stakes (+ source), diluted shares (+ period end), latest fiscal year-end, approximate end of year 1, `t_first` (years from valuation date to end of year 1), year-1 revenue already reported, `stub_fraction` (share of year 1 still to come), raw and adjusted beta, Blume weights, rf, ERP, cost of equity, cost of debt, tax rate, debt weight, WACC, terminal growth, exit multiple, scenario weights |
+| `dcf_values.csv` | One row per company: for Bear / Base / Bull: EV, equity value, value per share, upside, terminal-value share of EV, implied exit EV/EBITDA, value per share at the peer multiple; weighted value per share and upside; `quality_flag` (S6-D7) |
+| `dcf_detail.csv` | Per company × scenario × row (nopat, ufcf, fraction, counted, t, df, pv): the five forecast years |
+| `sensitivity_wacc_g.csv` | NVIDIA Base value per share: WACC (rows) × terminal growth (columns) |
+| `sensitivity_growth_margin.csv` | NVIDIA Base value per share: FY2028 Data Center growth (rows) × gross-margin shift in every year (columns) |
+| `reverse_dcf.csv` | NVIDIA Base: lever, model value, implied value at which value per share = price, status, note |
+| `manifest_step6.json` | Run time, output hashes, checks D1–D5 (and X3 with `--excel-check`) |
+| `m6_check_report.txt` | Full Step 6 status report from `python/m6_check.py` |
+
+**Workbook tabs** (added by `python/build_dcf.py`): WACC (beta, Blume adjustment, CAPM, cost of debt, weights; selected ticker) ·
+DCF (rows H–L: EBIT, tax rate, NOPAT, D&A, capex, working-capital increase, unlevered FCF, share counted, t, discount factor, PV;
+column C: valuation summary, equity bridge, value per share, exit-multiple check, Python scenario values and the OK check, live
+WACC × g grid; static growth × margin grid and reverse DCF for NVIDIA Base) · DcfData (inputs, blue; written by the script).
