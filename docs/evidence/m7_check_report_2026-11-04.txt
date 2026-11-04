@@ -1,0 +1,121 @@
+M7 CHECK REPORT 2026-11-04T14:11:26+00:00 project C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis
+
+==============================================================================
+1. ENVIRONMENT
+==============================================================================
+Python 3.14.8 (C:\Users\kyans\AppData\Local\venvs\nvda-stock-analysis\Scripts\python.exe)
+  requests  pinned 2.34.2   installed 2.34.2   OK
+  pandas    pinned 3.1.0    installed 3.1.0    OK
+  pytest    pinned 9.1.1    installed 9.1.1    OK
+  PyYAML    pinned 6.0.3    installed 6.0.3    OK
+  yfinance  pinned 1.7.0    installed 1.7.0    OK
+  openpyxl  pinned 3.1.5    installed 3.1.5    OK
+Venv OK; lock file OK
+
+==============================================================================
+2. PROJECT FILES
+==============================================================================
+Expected files present: 121/121
+
+==============================================================================
+3. OFFLINE TESTS
+==============================================================================
+  ........................................................................ [ 56%]
+  .......................................................                  [100%]
+  127 passed, 29 deselected in 18.13s
+
+==============================================================================
+4. STEP 7 COMPS + REPRODUCIBILITY
+==============================================================================
+  Step 7 comps -> C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\data\clean\step7, C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis\excel\NVDA_Forecast.xlsx
+  PASS  ALL   C1_ntm_calendarisation: w AMD 0.151, AVGO 0.000, INTC 0.151, MRVL 0.246, NVDA 0.230, QCOM 0.000
+  PASS  ALL   C2_ev_bridge: largest difference 0.00e+00
+  PASS  ALL   C3_target_excluded_from_stats: NVDA in no statistic
+  PASS  ALL   C4_headline_multiples_have_3_peers: n = ev_revenue_ntm 5, ev_ebitda_ntm 4, pe_ntm 5, ev_revenue_ltm 5, ev_ebitda_ltm 4, pe_ltm 3
+  PASS  ALL   C5_blend_weights_sum_to_1: DCF 0.5, comps 0.5
+  PASS  ALL   C6_percentiles_ordered: failing none
+  NVDA NTM P/E 14.0x, NTM EV/EBITDA 11.5x; comps value 338.80, DCF 157.47; blended 248.13 vs price 202.06 (+22.8%)
+  ... 6/6 checks pass
+  reproducibility: 6/6 CSV outputs byte-identical on rerun
+
+==============================================================================
+5. WORKBOOK COMPS vs PYTHON (LibreOffice recalculation)
+==============================================================================
+  MANUAL  X4_comps_excel_matches_python: SKIPPED: LibreOffice not found; open the workbook in Excel and check the Comps tab's blended value
+
+==============================================================================
+6. COMPS REVIEW (for sign-off; nothing here changes data)
+==============================================================================
+         NTM wt  NTM grw  GM LTM EV/Rev N EV/EBITDA N   P/E N EV/Rev L EV/EBITDA L   P/E L
+  AMD      0.15     104%     53%      8.9        n/m*    31.5     18.2        n/m*  120.4*
+  AVGO     0.00      96%     69%      9.0        15.6    16.6     17.7        30.6    41.2
+  INTC     0.15      14%     40%      4.6        19.2    34.2      5.3        21.9    n/m*
+  MRVL     0.25      89%     52%      8.5        28.4    26.1     16.0        53.6    59.8
+  NVDA     0.23     107%     75%      7.7        11.5    14.0     15.9        23.9    25.4
+  QCOM     0.00       2%     54%      4.0        14.8    16.0      4.0        15.0    18.7
+  * = left out of the peer statistics (above 100x, not meaningful, or fiscal-year EBITDA); NVIDIA is never in them
+  NVIDIA value per share at peer 25th / median / 75th:
+    EV / EBITDA, LTM        170 /    220 /    304   (NVIDIA at 23.9x)
+    EV / EBITDA, NTM        268 /    302 /    372   (NVIDIA at 11.5x)
+    EV / revenue, LTM        68 /    203 /    223   (NVIDIA at 15.9x)
+    EV / revenue, NTM       122 /    222 /    234   (NVIDIA at 7.7x)
+    P / E, LTM              238 /    327 /    401   (NVIDIA at 25.4x)
+    P / E, NTM              238 /    375 /    454   (NVIDIA at 14.0x)
+  Growth vs NTM EV/revenue (5 peers): R2 0.995; NVIDIA 7.7x vs 9.4x on the line -> 245.18 per share
+  Blend: 50% DCF 157.47 + 50% comps 338.80 = 248.13 vs price 202.06 (+22.8%)
+  Football field:
+    52-week range                    165 - 239     marker 202
+    DCF Bear to Bull                  66 - 227     marker 168
+    DCF, WACC 12-15%, g 2.5-3.5%     149 - 212     marker 168
+    Comps P / E, NTM                 238 - 454     marker 375
+    Comps EV / EBITDA, NTM           268 - 372     marker 302
+    Comps EV / revenue, NTM          122 - 234     marker 222
+    Comps EV / EBITDA, LTM           170 - 304     marker 220
+
+==============================================================================
+7. RECONCILIATION (all steps)
+==============================================================================
+  =========================== short test summary info ===========================
+  SKIPPED [1] tests\test_reconciliation_step5.py:55: LibreOffice not installed: open excel\NVDA_Forecast.xlsx in Excel and check Cover shows OK (MANUAL in m5_acceptance)
+  SKIPPED [1] tests\test_reconciliation_step6.py:54: LibreOffice not installed: open excel\NVDA_Forecast.xlsx in Excel; DCF tab must show OK (MANUAL in m6_acceptance)
+  SKIPPED [1] tests\test_reconciliation_step7.py:59: LibreOffice not installed: open excel\NVDA_Forecast.xlsx in Excel; Comps blended value must equal comps_blend.csv (MANUAL in m7_acceptance)
+  18 passed, 3 skipped, 135 deselected in 4.24s
+
+==============================================================================
+10. GIT READINESS (nothing is committed by this script)
+==============================================================================
+  identity set; files to commit: 15
+    README.md
+    docs/data_dictionary.md
+    docs/decision_log.md
+    docs/issue_log.md
+    excel/NVDA_Forecast.xlsx
+    python/build_model.py
+    config/comps.yaml
+    docs/m7_acceptance.md
+    python/build_comps.py
+    python/m7_check.py
+    python/run_step7.py
+    python/step7_check.py
+    python/step7_comps.py
+    tests/test_reconciliation_step7.py
+    tests/test_step7.py
+  raw collections and data/clean outputs ignored by Git: yes
+  e-mail or stored password in files to commit: none
+
+==============================================================================
+9. STEP 7 ACCEPTANCE SUMMARY
+==============================================================================
+  [T] PASS    Environment, pins and lock file
+  [T] PASS    All expected files present
+  [T] PASS    Offline test suite passes
+  [T] PASS    Step 7 runs: every error-level check passes
+  [T] PASS    CSV outputs byte-identical on rerun
+  [V] PASS    Calendarisation, EV bridge, exclusions, peer counts, blend weights, percentile order (C1-C6)
+  [V] MANUAL  Workbook Comps equals Python (LibreOffice) - or MANUAL: compare in Excel
+  [V] PASS    Inputs tie upstream, NTM EPS agrees with the second source, earlier references tie
+  [V] MANUAL  Comps table, implied values, football field and blend reviewed
+  [S] PASS    Git identity set, no unexpected files, outputs ignored, no secrets
+  [S] MANUAL  Decisions accepted and Step 7 commit made
+
+  Outstanding before sign-off: only the MANUAL items

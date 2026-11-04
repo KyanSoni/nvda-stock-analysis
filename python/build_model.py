@@ -3,7 +3,7 @@
 Tabs: Cover (ticker + scenario switch, key outputs, balance check), Assumptions (Bear/Base/Bull/Selected per driver,
 with reasons), Historicals, IS, BS, CF, Schedules (working capital, PP&E, debt, equity, shares, cash), Data and
 AssumptionsData (the inputs, written by this script from model_data.csv and assumptions.csv).
-Step 6 adds WACC, DCF and DcfData (build_dcf.py) when its inputs exist.
+Step 6 adds WACC, DCF and DcfData (build_dcf.py) and Step 7 Comps and CompsData (build_comps.py) when their inputs exist.
 Every forecast cell is a formula; the only typed numbers are the inputs on Data and AssumptionsData (blue).
 The equations are exactly those of step5_model.forecast, which the checks compare against.
 """
@@ -425,6 +425,11 @@ def build(md: pd.DataFrame, at: pd.DataFrame, estimates: pd.DataFrame, out: Path
     if dcf is not None:
         import build_dcf
         build_dcf.add(wb, dcf, IS, S, sel)
+        import step7_comps
+        comps = step7_comps.payload_or_none(dcf)      # Step 7 tabs whenever their inputs exist (I-64)
+        if comps is not None:
+            import build_comps
+            build_comps.add(wb, comps)
     for c in "CDEFGH":
         cover.column_dimensions[c].width = 13
     for ws in wb.worksheets:

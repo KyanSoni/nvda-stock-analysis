@@ -1,0 +1,20 @@
+# Step 7: comparable companies (decisions S7-D1 to S7-D9). Decided 2026-11-04 by Claude acting as senior equity
+# analyst, at Kyan's request ("make the decisions based on your knowledge in the role"). Amounts USD millions.
+
+target: NVDA
+ntm:                                   # S7-D2: calendarised next twelve months from the valuation date (Step 2 cutoff)
+  method: "w x current fiscal year (0y) + (1 - w) x next fiscal year (+1y); w = share of the current fiscal year still to come"
+  year_days: 365.25
+multiples:                             # S7-D1
+  headline: [pe_ntm, ev_ebitda_ntm]    # the comps value is the mean of the prices implied at the peer median of these two
+  shown: [ev_revenue_ntm, ev_ebitda_ntm, pe_ntm, ev_revenue_ltm, ev_ebitda_ltm, pe_ltm]
+exclusions:                            # S7-D3: a peer's multiple leaves the statistics (it stays visible in the table) when
+  max_multiple: 100                    #  - the multiple is above 100x (earnings too small to be meaningful), or
+  non_positive: true                   #  - its denominator is zero or negative, or
+  ebitda_fy_basis: [AMD]               #  - its EBITDA is a fiscal-year stand-in for LTM (S3-D11): no LTM EBITDA margin either
+percentiles: [25, 50, 75]              # Excel PERCENTILE (inclusive) = pandas quantile, linear
+blend:                                 # S7-D6: resolves the last part of D16
+  dcf: 0.5                             # probability-weighted DCF value per share (Step 6)
+  comps: 0.5
+football_field:                        # S7-D7: bars, low-high; marker = point value
+  dcf_sensitivity: {wacc: [0.12, 0.15], growth: [0.025, 0.035]}

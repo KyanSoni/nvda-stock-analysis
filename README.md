@@ -50,6 +50,10 @@ $env:PGPASSWORD = "<postgres password>"
 # Step 6 (offline; reads the Step 3, 4 and 5 outputs)
 & $vpy python\run_step6.py                        # DCF, sensitivities, reverse DCF -> data\clean\step6, WACC/DCF tabs in the workbook
 & $vpy python\m6_check.py                         # every Step 6 check -> data\clean\step6\m6_check_report.txt
+
+# Step 7 (offline; reads the Step 2-6 outputs)
+& $vpy python\run_step7.py                        # comps, football field, DCF/comps blend -> data\clean\step7, Comps tab in the workbook
+& $vpy python\m7_check.py                         # every Step 7 check -> data\clean\step7\m7_check_report.txt
 ```
 Change a forecast assumption in `config\model.yaml`, then `run_step5.py model`; edits made in the workbook itself are overwritten.
 
@@ -60,16 +64,17 @@ Change a forecast assumption in `config\model.yaml`, then `run_step5.py model`; 
 | `config/universe.yaml` | Step 2 companies, predecessors, fallbacks, derivations, market settings |
 | `config/step5.yaml`, `config/manual_facts_step5.csv`, `config/model.yaml` | Step 5 model line items, NVIDIA Data Center revenue (manual from 10-K), forecast assumptions with reasons |
 | `config/dcf.yaml` | Step 6 DCF settings: Blume beta, ERP, terminal growth, scenario weights, NVIDIA's listed equity stakes, sensitivity grids |
+| `config/comps.yaml` | Step 7 comps settings: headline multiples, NTM calendarisation, exclusion rules, DCF/comps blend |
 | `config/scorecard.yaml` | Step 4 tests and thresholds, estimates source, WACC assumptions |
 | `config/step3.yaml`, `config/manual_facts.csv`, `config/database.yaml` | Step 3 line items and derivations, manual facts (empty), PostgreSQL connection (no password) |
 | `sql/` | `schema.sql`, `views.sql`, `checks.sql`, `queries/` |
-| `python/` | M1: `fetch_sec.py`, `parse_companyfacts.py`, `select_facts.py`, `validate_m1.py`, `run_m1.py`, `m1_check.py`; Step 2: `fetch_step2.py`, `step2_sec.py`, `step2_market.py`, `run_step2.py`, `m2_check.py`; Step 3: `step3_facts.py`, `run_step3.py`, `step3_db.py`, `step3_reference.py`, `m3_check.py`; Step 4: `fetch_step4.py`, `step4_estimates.py`, `step4_db.py`, `step4_reference.py`, `run_step4.py`, `m4_check.py`; Step 5: `step5_facts.py`, `step5_model.py`, `build_model.py`, `step5_check.py`, `run_step5.py`, `m5_check.py`; Step 6: `step6_dcf.py`, `build_dcf.py`, `step6_check.py`, `run_step6.py`, `m6_check.py` |
+| `python/` | M1: `fetch_sec.py`, `parse_companyfacts.py`, `select_facts.py`, `validate_m1.py`, `run_m1.py`, `m1_check.py`; Step 2: `fetch_step2.py`, `step2_sec.py`, `step2_market.py`, `run_step2.py`, `m2_check.py`; Step 3: `step3_facts.py`, `run_step3.py`, `step3_db.py`, `step3_reference.py`, `m3_check.py`; Step 4: `fetch_step4.py`, `step4_estimates.py`, `step4_db.py`, `step4_reference.py`, `run_step4.py`, `m4_check.py`; Step 5: `step5_facts.py`, `step5_model.py`, `build_model.py`, `step5_check.py`, `run_step5.py`, `m5_check.py`; Step 6: `step6_dcf.py`, `build_dcf.py`, `step6_check.py`, `run_step6.py`, `m6_check.py`; Step 7: `step7_comps.py`, `build_comps.py`, `step7_check.py`, `run_step7.py`, `m7_check.py` |
 | `tests/` | Offline unit, contract and reproducibility tests; live and reconciliation tests on request |
 | `data/raw/sec/` | M1 companyfacts snapshots and fetch manifest (not in Git) |
 | `data/raw/collections/` | Step 2 collections, one dated folder per download run (not in Git) |
 | `data/clean/` | Pipeline outputs (not in Git) |
-| `excel/` | `NVDA_Model.xlsx` (Scorecard, Power Query), `NVDA_Forecast.xlsx` (3-statement model and DCF, generated) |
-| `docs/` | Decision log, issue log, M1–M6 acceptance checklists, data dictionary, evidence |
+| `excel/` | `NVDA_Model.xlsx` (Scorecard, Power Query), `NVDA_Forecast.xlsx` (3-statement model, DCF and comps, generated) |
+| `docs/` | Decision log, issue log, M1–M7 acceptance checklists, data dictionary, evidence |
 
 ## Universe
 Target NVDA. Peers AMD, AVGO, MRVL, QCOM, INTC. Benchmarks SPY, SOXX.

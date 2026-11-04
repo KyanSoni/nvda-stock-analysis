@@ -167,3 +167,24 @@ Step 4 `exports/v_beta.csv` and `config/dcf.yaml`. Rates are fractions, amounts 
 DCF (rows H–L: EBIT, tax rate, NOPAT, D&A, capex, working-capital increase, unlevered FCF, share counted, t, discount factor, PV;
 column C: valuation summary, equity bridge, value per share, exit-multiple check, Python scenario values and the OK check, live
 WACC × g grid; static growth × margin grid and reverse DCF for NVIDIA Base) · DcfData (inputs, blue; written by the script).
+
+# Step 7 outputs (`data/clean/step7/`, Comps tabs in `excel/NVDA_Forecast.xlsx`)
+
+Written by `python/run_step7.py` from Step 3 `v_valuation_cutoff.csv` and `v_ratios_ltm.csv`, Step 4 `estimates.csv`,
+the Step 6 DCF (recomputed in the same run), Step 2 `prices.csv` and `config/comps.yaml`. Floats with 6 decimals; multiples
+are plain ratios (14.036 = 14.0×); "n/m" in the workbook = blank here.
+
+| File | Contents |
+|---|---|
+| `comps_table.csv` | One row per company: price, diluted shares, market cap, debt, cash, short-term investments, stakes, net debt, EV; current fiscal year-end and NTM weight `w_fy0`; revenue FY0 / FY1 / NTM / LTM, NTM and LTM growth, LTM gross margin; LTM EBITDA, margin, NTM EBITDA; EPS FY0 / FY1 / NTM (consensus) and LTM (GAAP); 52-week low and high; the six multiples and `use_<multiple>` (1 = in the peer statistics) |
+| `comps_stats.csv` | Per multiple: peers used, n, min, p25, p50, p75, max |
+| `comps_implied.csv` | Per multiple: NVIDIA's metric and own multiple; NVIDIA value per share at each peer statistic |
+| `comps_regression.csv` | Peers' NTM EV/revenue on NTM growth: slope, intercept, R², NVIDIA's growth, actual and fitted multiple, value per share on the line |
+| `football_field.csv` | Method, low, high, marker, note |
+| `comps_blend.csv` | DCF weighted value, comps value, weights, blended value, price, upside |
+| `manifest_step7.json` | Run time, output hashes, checks C1–C6 (and X4 with `--excel-check`) |
+| `m7_check_report.txt` | Full Step 7 status report from `python/m7_check.py` |
+
+**Workbook tabs** (`python/build_comps.py`): Comps (company table with live multiples, in-statistics flags and statistic helper
+columns; peer statistics; NVIDIA implied values; growth regression; blend; football-field table and chart; growth-vs-multiple
+scatter) · CompsData (inputs, blue; written by the script).
