@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="308" viewBox="0 0 760 308" font-family="Calibri, Arial, sans-serif" font-size="12">
+<rect x="0" y="0" width="760" height="308" fill="#ffffff"/>
+<line x1="250.0" y1="24" x2="250.0" y2="274" stroke="#e5e5e5"/>
+<text x="250.0" y="290" text-anchor="middle" fill="#555555">$0</text>
+<line x1="300.3" y1="24" x2="300.3" y2="274" stroke="#e5e5e5"/>
+<text x="300.3" y="290" text-anchor="middle" fill="#555555">$50</text>
+<line x1="350.7" y1="24" x2="350.7" y2="274" stroke="#e5e5e5"/>
+<text x="350.7" y="290" text-anchor="middle" fill="#555555">$100</text>
+<line x1="401.0" y1="24" x2="401.0" y2="274" stroke="#e5e5e5"/>
+<text x="401.0" y="290" text-anchor="middle" fill="#555555">$150</text>
+<line x1="451.3" y1="24" x2="451.3" y2="274" stroke="#e5e5e5"/>
+<text x="451.3" y="290" text-anchor="middle" fill="#555555">$200</text>
+<line x1="501.6" y1="24" x2="501.6" y2="274" stroke="#e5e5e5"/>
+<text x="501.6" y="290" text-anchor="middle" fill="#555555">$250</text>
+<line x1="552.0" y1="24" x2="552.0" y2="274" stroke="#e5e5e5"/>
+<text x="552.0" y="290" text-anchor="middle" fill="#555555">$300</text>
+<line x1="602.3" y1="24" x2="602.3" y2="274" stroke="#e5e5e5"/>
+<text x="602.3" y="290" text-anchor="middle" fill="#555555">$350</text>
+<line x1="652.6" y1="24" x2="652.6" y2="274" stroke="#e5e5e5"/>
+<text x="652.6" y="290" text-anchor="middle" fill="#555555">$400</text>
+<line x1="703.0" y1="24" x2="703.0" y2="274" stroke="#e5e5e5"/>
+<text x="703.0" y="290" text-anchor="middle" fill="#555555">$450</text>
+<text x="242" y="47" text-anchor="end" fill="#222222">52-week range</text>
+<rect x="416.3" y="36" width="74.6" height="16" fill="#9e9e9e" opacity="0.85"/>
+<line x1="453.4" y1="33" x2="453.4" y2="55" stroke="#000000" stroke-width="2"/>
+<text x="412.3" y="48" text-anchor="end" fill="#555555" font-size="10">165</text>
+<text x="494.8" y="48" fill="#555555" font-size="10">239</text>
+<text x="242" y="81" text-anchor="end" fill="#222222">DCF Bear to Bull</text>
+<rect x="316.5" y="70" width="161.9" height="16" fill="#29498d" opacity="0.85"/>
+<line x1="419.5" y1="67" x2="419.5" y2="89" stroke="#000000" stroke-width="2"/>
+<text x="312.5" y="82" text-anchor="end" fill="#555555" font-size="10">66</text>
+<text x="482.4" y="82" fill="#555555" font-size="10">227</text>
+<text x="242" y="115" text-anchor="end" fill="#222222">DCF, WACC 12-15%, g 2.5-3.5%</text>
+<rect x="399.5" y="104" width="64.1" height="16" fill="#29498d" opacity="0.85"/>
+<line x1="419.5" y1="101" x2="419.5" y2="123" stroke="#000000" stroke-width="2"/>
+<text x="395.5" y="116" text-anchor="end" fill="#555555" font-size="10">149</text>
+<text x="467.7" y="116" fill="#555555" font-size="10">212</text>
+<text x="242" y="149" text-anchor="end" fill="#222222">Comps P / E, NTM</text>
+<rect x="489.9" y="138" width="217.3" height="16" fill="#76b900" opacity="0.85"/>
+<line x1="627.8" y1="135" x2="627.8" y2="157" stroke="#000000" stroke-width="2"/>
+<text x="485.9" y="150" text-anchor="end" fill="#555555" font-size="10">238</text>
+<text x="711.1" y="150" fill="#555555" font-size="10">454</text>
+<text x="242" y="183" text-anchor="end" fill="#222222">Comps EV / EBITDA, NTM</text>
+<rect x="519.4" y="172" width="105.3" height="16" fill="#76b900" opacity="0.85"/>
+<line x1="554.2" y1="169" x2="554.2" y2="191" stroke="#000000" stroke-width="2"/>
+<text x="515.4" y="184" text-anchor="end" fill="#555555" font-size="10">268</text>
+<text x="628.7" y="184" fill="#555555" font-size="10">372</text>
+<text x="242" y="217" text-anchor="end" fill="#222222">Comps EV / revenue, NTM</text>
+<rect x="372.9" y="206" width="112.6" height="16" fill="#76b900" opacity="0.85"/>
+<line x1="473.1" y1="203" x2="473.1" y2="225" stroke="#000000" stroke-width="2"/>
+<text x="368.9" y="218" text-anchor="end" fill="#555555" font-size="10">122</text>
+<text x="489.6" y="218" fill="#555555" font-size="10">234</text>
+<text x="242" y="251" text-anchor="end" fill="#222222">Comps EV / EBITDA, LTM</text>
+<rect x="421.1" y="240" width="134.9" height="16" fill="#76b900" opacity="0.85"/>
+<line x1="471.7" y1="237" x2="471.7" y2="259" stroke="#000000" stroke-width="2"/>
+<text x="417.1" y="252" text-anchor="end" fill="#555555" font-size="10">170</text>
+<text x="560.0" y="252" fill="#555555" font-size="10">304</text>
+<line x1="453.4" y1="20" x2="453.4" y2="274" stroke="#c00000" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="457.4" y="16" fill="#c00000">Price $202.06</text>
+<line x1="511.7" y1="20" x2="511.7" y2="274" stroke="#29498d" stroke-width="1.5"/>
+<text x="515.7" y="28" fill="#29498d">Target $260</text>
+</svg>

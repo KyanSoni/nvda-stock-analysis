@@ -1,0 +1,99 @@
+M9 CHECK REPORT 2026-11-14T16:06:06+00:00 project C:\Users\kyans\OneDrive\Stock Analysis\nvda-stock-analysis
+
+==============================================================================
+1. ENVIRONMENT
+==============================================================================
+Python 3.14.8 (C:\Users\kyans\AppData\Local\venvs\nvda-stock-analysis\Scripts\python.exe)
+  requests  pinned 2.34.2   installed 2.34.2   OK
+  pandas    pinned 3.1.0    installed 3.1.0    OK
+  pytest    pinned 9.1.1    installed 9.1.1    OK
+  PyYAML    pinned 6.0.3    installed 6.0.3    OK
+  yfinance  pinned 1.7.0    installed 1.7.0    OK
+  openpyxl  pinned 3.1.5    installed 3.1.5    OK
+Venv OK; lock file OK
+
+==============================================================================
+2. PROJECT FILES
+==============================================================================
+Expected files present: 135/135
+
+==============================================================================
+3. OFFLINE TESTS
+==============================================================================
+  ........................................................................ [ 52%]
+  .................................................................        [100%]
+  137 passed, 31 deselected in 19.23s
+
+==============================================================================
+4. STEP 9 MEMO: CHECKS + REPRODUCIBILITY
+==============================================================================
+  PASS  M1_comparative_claims_true: 8 claims; false: none
+  PASS  M2_every_number_has_a_source: 77 placeholders; without a source: none
+  PASS  M3_target_arithmetic: 0.5 x 157.4656 x (1 + 0.1395 - 0.0002) + 0.5 x 338.8032 = 259.0985 -> 260
+  PASS  M4_rating_follows_bands: expected return +28.69% -> Buy
+  PASS  M5_rating_and_target_in_first_line: # NVIDIA (NVDA): Buy, 12-month target $260 (+28.7% vs $202.06 on 2 Nov 2026)
+  PASS  M6_page_one_length: 761 words before the exhibits (limit 1,100, about one page at 10 pt)
+  PASS  M7_memo_in_docs_is_current: docs/memo matches a fresh render
+  Buy, 12-month target $260 (+28.7% vs $202.06); DCF 157.47 -> 179.39 rolled forward, comps 338.80
+  Step 9 memo -> C:\Users\kyans\AppData\Local\Temp\tmpnridyaxb\NVDA_investment_memo.md, C:\Users\kyans\AppData\Local\Temp\tmpnridyaxb\football_field.svg, C:\Users\kyans\AppData\Local\Temp\tmpnridyaxb\memo_numbers.csv
+  PASS  M1_comparative_claims_true: 8 claims; false: none
+  reproducibility: memo, exhibit and numbers file byte-identical on two renders
+
+==============================================================================
+6. THE CALL (for sign-off; nothing here changes data)
+==============================================================================
+  NVIDIA (NVDA): Buy, 12-month target $260 (+28.7% vs $202.06 on 2 Nov 2026)
+  DCF weighted 157.47 -> rolled forward 179.39 (Ke 13.95% - dividend yield 0.02%)
+  Comps 338.80 (NTM P/E 375, NTM EV/EBITDA 302; NTM range 222-375)
+  Target 259.10 -> 260; expected return +28.7% -> Buy
+  Market-implied: WACC 12.05% (ours 13.87%), g 5.35%, FY2028 Data Center growth 110%
+  Read docs\memo\NVDA_investment_memo.pdf (or the .md) in full before sign-off.
+
+==============================================================================
+7. RECONCILIATION (all steps)
+==============================================================================
+  .............s..s...s..                                                  [100%]
+  =========================== short test summary info ===========================
+  SKIPPED [1] tests\test_reconciliation_step5.py:55: LibreOffice not installed: open excel\NVDA_Forecast.xlsx in Excel and check Cover shows OK (MANUAL in m5_acceptance)
+  SKIPPED [1] tests\test_reconciliation_step6.py:54: LibreOffice not installed: open excel\NVDA_Forecast.xlsx in Excel; DCF tab must show OK (MANUAL in m6_acceptance)
+  SKIPPED [1] tests\test_reconciliation_step7.py:59: LibreOffice not installed: open excel\NVDA_Forecast.xlsx in Excel; Comps blended value must equal comps_blend.csv (MANUAL in m7_acceptance)
+  20 passed, 3 skipped, 145 deselected in 7.26s
+
+==============================================================================
+10. GIT READINESS (nothing is committed by this script)
+==============================================================================
+  identity set; files to commit: 17
+    README.md
+    docs/data_dictionary.md
+    docs/decision_log.md
+    docs/issue_log.md
+    config/memo.yaml
+    docs/m9_acceptance.md
+    docs/memo/NVDA_investment_memo.md
+    docs/memo/NVDA_investment_memo.pdf
+    docs/memo/exhibits/football_field.svg
+    docs/memo/memo_template.md
+    excel/NVDA_Simple_DCF.xlsx
+    python/build_simple_dcf.py
+    python/m9_check.py
+    python/run_step9.py
+    python/step9_memo.py
+    tests/test_reconciliation_step9.py
+    tests/test_step9.py
+  raw collections and data/clean outputs ignored by Git: yes
+  e-mail or stored password in files to commit: none
+
+==============================================================================
+9. STEP 9 ACCEPTANCE SUMMARY
+==============================================================================
+  [T] PASS    Environment, pins and lock file
+  [T] PASS    All expected files present
+  [T] PASS    Offline test suite passes
+  [T] PASS    Memo renders; M1-M7 pass (claims true, sources, target, rating, first line, length, current)
+  [T] PASS    Memo, exhibit and numbers byte-identical on two renders
+  [V] PASS    Target and headline figures tie to Steps 6-7; earlier references tie
+  [V] MANUAL  Memo read in full; rating, target, thesis, risks and catalysts judged
+  [S] PASS    Git identity set, no unexpected files, outputs ignored, no secrets
+  [S] MANUAL  Decisions accepted and Step 9 commit made
+
+  Outstanding before sign-off: only the MANUAL items

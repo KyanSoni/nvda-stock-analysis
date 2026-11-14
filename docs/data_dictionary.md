@@ -188,3 +188,17 @@ are plain ratios (14.036 = 14.0×); "n/m" in the workbook = blank here.
 **Workbook tabs** (`python/build_comps.py`): Comps (company table with live multiples, in-statistics flags and statistic helper
 columns; peer statistics; NVIDIA implied values; growth regression; blend; football-field table and chart; growth-vs-multiple
 scatter) · CompsData (inputs, blue; written by the script).
+
+# Step 9 outputs (investment memo)
+
+Written by `python/run_step9.py` from `docs/memo/memo_template.md`, `config/memo.yaml`, `config/comps.yaml` and the Step 4–7 outputs.
+
+| File | Contents |
+|---|---|
+| `docs/memo/NVDA_investment_memo.md` | The memo (page 1 text, page 2 exhibits), rendered; committed |
+| `docs/memo/exhibits/football_field.svg` | Exhibit 1: range bars per method, markers, price (dashed red) and target (blue) lines; committed |
+| `docs/memo/NVDA_investment_memo.pdf` | Two-page A4 render of the memo (I-68); committed |
+| `data/clean/step9/memo_numbers.csv` | name, value, source: every number the memo quotes (6 decimals) and the file and column it came from |
+| `data/clean/step9/manifest_step9.json` | Run time, output hashes, checks M1–M6 |
+| `data/clean/step9/m9_check_report.txt` | Full Step 9 status report from `python/m9_check.py` |
+| `excel/NVDA_Simple_DCF.xlsx` | Base-case workbook in a simple template layout (Company Comparison, Statements Model, DCF), from `python/build_simple_dcf.py` (S9-D7) |

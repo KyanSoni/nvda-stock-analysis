@@ -1,0 +1,31 @@
+# Step 9: investment memo settings (decisions S9-D1 to S9-D6). Decided 2026-11-09 by Claude acting as senior equity
+# analyst at Kyan's request. The memo text is docs/memo/memo_template.md; every number in it comes from python/step9_memo.py.
+
+author: "Kyan Soni"
+target:                                  # S9-D1
+  dcf_roll_forward: true                 # the DCF half grows 12 months at cost of equity less dividend yield
+  comps_roll_forward: false              # the comps half is already on NTM figures
+  round_to: 5                            # USD
+rating_bands:                            # S9-D2: 12-month expected total return = target / price - 1 + dividend yield
+  buy_above: 0.15
+  sell_below: -0.10
+guidance:                                # quoted in the thesis and catalysts
+  q3_fy27_revenue_bn: 108.0
+  q3_fy27_gross_margin: 0.740
+  source: "NVIDIA Q2 FY2027 results, 26 Aug 2026 (https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000073/q2fy27pr.htm), as in config/model.yaml"
+catalysts:                               # S9-D5: verified dates only; 'expected' where the company has not announced one
+  - when: "17 Nov 2026"
+    what: "Q3 FY2027 results (conference call 2 p.m. PT)"
+    source: "https://nvidianews.nvidia.com/news/nvidia-sets-conference-call-for-third-quarter-financial-results-6928873 (checked 2026-11-09)"
+  - when: "Fall 2026"
+    what: "Vera Rubin production shipments begin"
+    source: "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Vera-Rubin-Ramps-Into-Full-Production-to-Power-Agentic-AI-Factories-Worldwide/default.aspx (31 May 2026)"
+  - when: "Late Jan to early Feb 2027 (expected)"
+    what: "Hyperscaler capex guidance with their Q4 calendar-2026 results"
+    source: "usual reporting calendar; dates not yet announced"
+  - when: "Late Feb 2027 (expected)"
+    what: "Q4 FY2027 results and FY2028 outlook"
+    source: "usual reporting calendar; date not yet announced"
+memo_date: "2026-11-09"                  # S9-D6: the memo's date; the analysis stays priced at the Step 2 cutoff
+risk_triggers:
+  gross_margin_cut: 0.70                 # two quarters below this would cut the rating (Risks table)
