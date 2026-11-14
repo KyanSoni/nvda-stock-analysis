@@ -1,12 +1,76 @@
-# NVIDIA Stock Analysis
+# NVIDIA (NVDA): Buy, 12-month target $260
 
-Does NVIDIA's competitive position in AI computing justify the future cash flows implied by its current
-business performance and long-term growth expectations?
+**Question:** does NVIDIA's position in AI computing justify the future cash flows its share price implies?
 
-This repository builds the answer in tested stages.
-- **M1 (signed off):** NVIDIA's SEC companyfacts with full provenance, documented selection rules, gaps and validation.
-- **Step 2 / M2:** the same for peers AMD, AVGO, MRVL, QCOM and INTC (including predecessor registrants), plus daily
-  prices, corporate actions, shares outstanding and the 10-year Treasury yield at one cutoff date.
+**Answer:** on its own cash flows, only at a 12.05% discount rate (the model uses 13.87%). Against its peers, yes: NVIDIA
+trades at 14.0× next-twelve-month earnings against a peer median of 26.1×, despite the group's highest growth (107%) and
+gross margin (75%). Blending a DCF ($157.47) and comparable companies ($338.80) 50/50, with the DCF rolled forward a year,
+gives a **12-month target of $260, +28.7% on $202.06 (2 Nov 2026 close): Buy**. The rating rests on relative value; the DCF
+is the limit on how far it leans.
+
+📄 **[Read the two-page investment memo (PDF)](docs/memo/NVDA_investment_memo.pdf)** · [Markdown version](docs/memo/NVDA_investment_memo.md)
+
+![Football field: value per share by method, with the price and the target](docs/memo/exhibits/football_field.svg)
+
+| | Value per share | vs $202.06 |
+|---|---:|---:|
+| DCF, probability-weighted (Bear $66 / Base $168 / Bull $227) | $157.47 | −22% |
+| Comps: peer-median NTM P/E and NTM EV/EBITDA | $338.80 | +68% |
+| What the price implies | WACC 12.05%, or terminal growth 5.35%, or FY2028 Data Center growth 110% | |
+| **12-month target** (50% DCF rolled forward + 50% comps) | **$260** | **+28.7%** |
+
+## How it is built
+
+```mermaid
+flowchart LR
+  A[SEC XBRL filings<br/>NVIDIA + 5 peers] --> C[Python<br/>selection rules, provenance]
+  B[Prices, consensus,<br/>10-year Treasury] --> C
+  C --> D[(PostgreSQL<br/>ratio and scorecard views)]
+  D --> E[3-statement model<br/>Bear / Base / Bull]
+  E --> F[DCF, sensitivities,<br/>reverse DCF]
+  D --> G[Calendarised comps]
+  F --> H[Investment memo]
+  G --> H
+  E --> X[Excel workbook<br/>live formulas]
+  F --> X
+  G --> X
+```
+
+| Step | What it produces | Where |
+|---|---|---|
+| 1–2 | SEC companyfacts for NVIDIA and peers (AMD, AVGO, MRVL, QCOM, INTC), prices, consensus, Treasury yield, with full provenance | `python/run_m1.py`, `python/fetch_step2.py` |
+| 3 | Clean facts and LTM ratios in PostgreSQL; valuation at the cutoff | `sql/`, `python/run_step3.py` |
+| 4 | 10-test quality scorecard, beta and WACC inputs (NVIDIA 18/20) | `config/scorecard.yaml`, `python/run_step4.py` |
+| 5 | 3-statement forecast FY2027–FY2031, three scenarios, balance sheet balances every year | `excel/NVDA_Forecast.xlsx`, `python/step5_model.py` |
+| 6 | DCF: Blume-adjusted beta, mid-year discounting, terminal value checks, WACC × growth and growth × margin sensitivities, reverse DCF | DCF tab, `python/step6_dcf.py` |
+| 7 | Comparable companies on calendarised NTM and LTM multiples, football field, growth vs multiple | Comps tab, `python/step7_comps.py` |
+| 9 | Two-page memo; every number in it generated from the outputs, with its source | `docs/memo/`, `python/step9_memo.py` |
+
+A simpler Base-case workbook in a common template layout is in `excel/NVDA_Simple_DCF.xlsx`. The Power BI dashboard (Step 8)
+is not built yet.
+
+## How it is verified
+
+- **180 values checked against the filings:** 15 NVIDIA (M1), 56 peer and 6 price (Step 2), 60 (Step 3), 37 (Step 5) and
+  6 from the Q2 FY2027 10-Q (Step 6), each with accession number and location in `tests/fixtures/`.
+- **Excel equals Python:** every workbook formula is recalculated and compared with an independent Python model for all six
+  companies and three scenarios (worst difference below 1e-13).
+- **137 offline tests and 20 reconciliation tests** (plus three workbook comparisons that need LibreOffice, done in Excel);
+  outputs are byte-identical when rerun.
+- **Every decision and every known issue is logged:** [`docs/decision_log.md`](docs/decision_log.md),
+  [`docs/issue_log.md`](docs/issue_log.md). Each step was signed off against a checklist (`docs/m*_acceptance.md`), with
+  its check report in `docs/evidence/`.
+
+## Limitations
+
+- Priced at the 2 Nov 2026 cutoff; NVIDIA's Q3 FY2027 results (17 Nov 2026) are the next update (I-69).
+- The DCF has a five-year explicit period and 3% terminal growth; with these inputs every company in the group values
+  below its price (I-60), which is why the rating rests on relative value. A longer fade period is planned (I-70).
+- The peer median P/E is lifted by companies whose earnings are recovering (I-65); the memo states the full comps range
+  ($222–$375).
+- Peer forecasts are mechanical; NVIDIA's are researched (S5-D6).
+
+This is a portfolio project, not investment advice.
 
 ## Setup (Windows, PowerShell)
 Python 3.14.8 with a project venv outside OneDrive:
