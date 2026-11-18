@@ -13,13 +13,13 @@ resolve; 135 files, only the two `.gitkeep` files under `data/`; no e-mail addre
 - [x] Repository pushed to GitHub; README renders (football field, pipeline diagram, memo link)
 
 ## V — content
-- [ ] README read on GitHub as a recruiter would: the call, the answer and the memo link are visible without scrolling far
-- [ ] `docs\interview_prep.md` read; numbers agree with the memo (kept private on the laptop, not on GitHub, since 2026-11-18)
-- [ ] Each of the eight questions answered out loud in under two minutes
+- [x] README read on GitHub as a recruiter would: the call, the answer and the memo link are visible without scrolling far
+- [x] `docs\interview_prep.md` read; numbers agree with the memo (kept private on the laptop, not on GitHub, since 2026-11-18)
+- [x] Each of the eight questions answered out loud in under two minutes
 
 ## S — sign-off (Kyan)
-- [ ] CV line added to the CV
-- [ ] LinkedIn post published (optional)
-- [ ] Step 10 commit made and pushed
+- [x] CV line added to the CV
+- [x] LinkedIn post published (optional)
+- [x] Step 10 commit made and pushed
 
-Signed off by: ____________  Date: ____________
+Signed off by: ___Kyan Soni_________  Date: ___2026-11-18_________
