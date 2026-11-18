@@ -14,7 +14,7 @@ resolve; 135 files, only the two `.gitkeep` files under `data/`; no e-mail addre
 
 ## V — content
 - [ ] README read on GitHub as a recruiter would: the call, the answer and the memo link are visible without scrolling far
-- [ ] `docs\interview_prep.md` read; numbers agree with the memo
+- [ ] `docs\interview_prep.md` read; numbers agree with the memo (kept private on the laptop, not on GitHub, since 2026-11-18)
 - [ ] Each of the eight questions answered out loud in under two minutes
 
 ## S — sign-off (Kyan)

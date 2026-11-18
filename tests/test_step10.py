@@ -28,5 +28,7 @@ def test_readme_call_matches_memo():
 def test_no_email_addresses_in_public_documents():
     pat = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
     for p in (README, PREP, MEMO):
+        if p == PREP and not p.exists():
+            continue                     # interview prep is kept private (git-ignored); absent in a fresh clone
         found = [e for e in pat.findall(p.read_text(encoding="utf-8")) if not e.endswith("@example.com")]
         assert not found, f"{p.name}: {found}"
