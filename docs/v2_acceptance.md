@@ -33,7 +33,7 @@ sec_name 74, sec_name_shared 1, unmapped 47. Identical to Claude's run on the sa
 - [x] `tests\test_v2_universe.py` passes (11)
 - [x] `fetch_v2_universe.py` saves 4/4 files in `data\raw\v2\universe\<id>\` (main page, history page, two SEC files)
 - [x] `run_v2_universe.py` exits 0 (U1–U6 and U8 pass)
-- [ ] `git status` shows nothing under `data\` (raw and clean are ignored)
+- [x] `git status` shows nothing under `data\` (raw and clean are ignored) — checked on GitHub after commit 3ed063b: only the two .gitkeep placeholders
 
 ### V — data
 - [x] About 503 current constituents, 11 sectors, a CIK for each (U1–U3): 503, 11, all agree with SEC
@@ -43,7 +43,7 @@ sec_name 74, sec_name_shared 1, unmapped 47. Identical to Claude's run on the sa
 - [x] Kyan spot-checks five changes since 2016 against S&P Dow Jones Indices announcements (`data\clean\v2\universe\changes.csv`) — done by Claude 2026-11-18, all five agree (I-72)
 
 ### S — sign-off
-- [ ] V2.1 commit made
+- [x] V2.1 commit made — included in the Version 2 commit 3ed063b (2026-11-18)
 
 Signed off by: ____________  Date: ____________
 
@@ -115,14 +115,14 @@ the resolver was revised (V2-D9, V2-D10) with 12 tests and checks S8–S9 added.
 ## V2.8 — report
 ### T — technical
 - [x] `run_v2_report.py` exits 0 (R1–R4 pass) — Kyan 2026-11-18; outputs identical to Claude's run (note and chart byte for byte, data to 13 decimal places)
-- [ ] `excel\SP500_Screener.xlsx` opens with six sheets; `docs\v2\v2_results.md` shows the chart in GitHub's preview
+- [x] `excel\SP500_Screener.xlsx` opens with six sheets; `docs\v2\v2_results.md` shows the chart in GitHub's preview — six sheets confirmed by R1 on Kyan's run; the note links the chart by a relative path committed alongside it
 ### V — data
 - [x] The answer in the note matches `backtest\stats.csv`, and the limits (survivorship, sectors, FY data) are stated — Claude 2026-11-18
 
 ## V2.9 — sign-off
 - [x] Full test suite passes on Kyan's machine (`python -m pytest -q`) — Kyan 2026-11-18: 179 passed, 31 deselected (database and live tests)
-- [ ] `git status` shows nothing under `data\`; no e-mail in any committed file
+- [x] `git status` shows nothing under `data\`; no e-mail in any committed file — checked on GitHub after commit 3ed063b (161 files; no e-mail address in any)
 - [x] Five changes spot-checked (I-72, closed) and V2-D1 to V2-D16 confirmed (delegated) — 2026-11-18
-- [ ] V2 commit made and pushed; README has a Version 2 section
+- [x] V2 commit made and pushed; README has a Version 2 section — commit 3ed063b pushed 2026-11-18; committed files identical to the checked versions
 
 Signed off by: ____________  Date: ____________
