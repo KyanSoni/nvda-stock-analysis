@@ -72,6 +72,21 @@ is not built yet.
 
 This is a portfolio project, not investment advice.
 
+## Version 2: does quality pay across the S&P 500?
+
+The Step 4 scorecard, rebuilt from SEC filings for every S&P 500 member since 2016 and tested out of sample: each 1 April,
+buy the 30 highest-scoring companies (Financials and Real Estate excluded), hold a year, 0.1% cost a side.
+**Answer, April 2016 to April 2026: partly.** The top 30 returned 14.20% a year, against 13.00% for an equal-weight
+portfolio of every company the screen could rank and 14.06% for SPY; it beat 79% of 1,000 random 30-stock portfolios
+from the same companies. Results, robustness tests and limits: [`docs/v2/v2_results.md`](docs/v2/v2_results.md);
+today's screen: `excel/SP500_Screener.xlsx`.
+
+- **Point in time throughout:** members at each date rebuilt from the index's change history; each member's SEC filer at
+  that date (successors, predecessors, renames and takeovers resolved on EDGAR's dated records); only facts filed before
+  the date; Version 1's formulas, which agree with Version 1 on 46 of 48 figures for the six chip companies.
+- **Stated limit:** Yahoo Finance has no prices for most companies taken over since, so they cannot be held (I-80);
+  the equal-weight universe shares that limit, and a "today's members only" run shows the bias it would add (+2.2 points a year).
+
 ## Setup (Windows, PowerShell)
 Python 3.14.8 with a project venv outside OneDrive:
 ```powershell
@@ -125,6 +140,21 @@ $env:PGPASSWORD = "<postgres password>"
 & $vpy python\build_simple_dcf.py                 # optional: excel\NVDA_Simple_DCF.xlsx (Base case, simple template layout)
 ```
 Change a forecast assumption in `config\model.yaml`, then `run_step5.py model`; edits made in the workbook itself are overwritten.
+
+Version 2 (bulk downloads go to `%LOCALAPPDATA%\nvda-data\v2`, outside OneDrive; `SEC_USER_AGENT` set as above):
+```powershell
+& $vpy python\fetch_v2_universe.py                # Wikipedia and SEC name files (network)
+& $vpy python\run_v2_universe.py                  # V2.1 members at each date
+& $vpy python\fetch_v2_sec.py submissions         # V2.2 SEC filing histories (network, resumable)
+& $vpy python\fetch_v2_sec.py companyfacts        # V2.3 SEC company facts (network, resumable)
+& $vpy python\fetch_v2_prices.py                  # V2.4 Yahoo prices (network, resumable)
+& $vpy python\run_v2_sec.py                       # V2.2 the filer and sector at each date
+& $vpy python\run_v2_facts.py                     # V2.3 point-in-time facts, checked against Version 1
+& $vpy python\run_v2_prices.py                    # V2.4 price panel and checks
+& $vpy python\run_v2_scores.py                    # V2.5 scores and ranks at every date
+& $vpy python\run_v2_backtest.py                  # V2.6-V2.7 backtest and robustness
+& $vpy python\run_v2_report.py                    # V2.8 excel\SP500_Screener.xlsx, docs\v2\v2_results.md
+```
 
 ## Layout
 | Path | Contents |

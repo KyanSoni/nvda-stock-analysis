@@ -18,3 +18,6 @@ data/raw/estimates/
 ~$*
 desktop.ini
 Thumbs.db
+
+# Version 2 raw downloads (universe; bulk SEC data lives outside OneDrive, V2-D7)
+data/raw/v2/

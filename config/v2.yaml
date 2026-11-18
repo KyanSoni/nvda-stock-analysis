@@ -1,0 +1,193 @@
+# Version 2: S&P 500 screener and backtest (decisions V2-D1 to V2-D8, docs/decision_log.md). Decided 2026-11-14 by
+# Claude acting as senior equity analyst, at Kyan's request. Question: do companies that score well on the quality
+# scorecard beat the S&P 500 over the following year?
+
+universe:                                   # V2-D1: point-in-time membership, rebuilt from Wikipedia's change history
+  wikipedia_url: "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+  history_url: "https://en.wikipedia.org/wiki/Historical_components_of_the_S%26P_500"   # the change history moved here (I-75)
+  wikipedia_user_agent: "nvda-stock-analysis/2.0 (portfolio research; https://github.com/KyanSoni/nvda-stock-analysis)"
+  constituents_table_id: constituents
+  changes_table_id: changes                 # used if present; otherwise every table whose headers say date / added / removed
+  sec_ticker_url: "https://www.sec.gov/files/company_tickers.json"
+  sec_name_url: "https://www.sec.gov/Archives/edgar/cik-lookup-data.txt"   # every EDGAR filer name -> CIK, for removed companies
+  raw_dir: data/raw/v2/universe              # small files; git-ignored
+  clean_dir: data/clean/v2/universe
+  expected_size: [495, 510]                  # constituents at any date (the index holds ~503 lines for ~500 companies)
+  cik_coverage_error_below: 0.85             # share of members with a CIK at a rebalance date
+  cik_coverage_target: 0.95
+sectors:                                    # V2-D2
+  gics: ["Communication Services", "Consumer Discretionary", "Consumer Staples", "Energy", "Financials", "Health Care",
+         "Industrials", "Information Technology", "Materials", "Real Estate", "Utilities"]
+  excluded: ["Financials", "Real Estate"]   # banks, insurers and REITs have no gross margin, quick ratio or comparable debt
+backtest:                                   # V2-D4, V2-D5
+  rebalance_month_day: "04-01"              # 1 April: most December year-end 10-Ks are filed by then
+  first_year: 2016
+  last_year: 2025                           # last holding period Apr 2025 - Apr 2026
+  holdings: 30
+  weighting: equal
+  tie_break: roic                           # point-in-time; DCF upside is not (it needs forecasts)
+  benchmark: SPY                            # total return (adjusted close)
+  cost_per_side: 0.001
+scorecard_v2:                               # V2-D3: filing-only version of the Step 4 scorecard, maximum 18 points
+  dropped: ["peg_forward"]                  # needs consensus history that free sources do not keep
+  gross_margin_vs: gics_sector_median       # was: median of the five Version 1 peers
+  roic_test: {pass: 0.15, near: 0.10}       # ROIC above a fixed hurdle replaces ROIC - WACC (pass +5 pts, near 0 on a ~10% WACC)
+storage:                                    # V2-D7: bulk SEC data (V2.2) lives outside OneDrive
+  bulk_root_env: NVDA_V2_DATA               # if unset: %LOCALAPPDATA%\nvda-data\v2
+outputs:                                    # V2-D6
+  workbook: excel/SP500_Screener.xlsx
+  note: docs/v2/v2_results.md
+
+# ---------------- V2.2 onwards (decisions V2-D9 to V2-D16, decided 2026-11-17) ----------------
+robustness:                                 # V2.7: the same test re-run with one choice changed at a time
+  alt_month_day: "07-01"                    # a July rebalance; run_v2_universe.py adds these dates to membership.csv
+  holdings: [20, 30, 50]
+  random_portfolios: 1000
+  random_seed: 20261117
+sec:                                        # V2.2 and V2.3: SEC EDGAR (fair access: at most 10 requests a second)
+  submissions_url: "https://data.sec.gov/submissions/CIK{cik}.json"
+  submissions_page_url: "https://data.sec.gov/submissions/{name}"
+  companyfacts_url: "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
+  min_seconds_between_requests: 0.15        # about 7 a second
+  annual_forms: ["10-K", "10-K405", "10-KT", "20-F", "40-F"]   # an annual report filed by this CIK (amendments not counted)
+  ten_k_window_months: 18                   # V2-D9: a CIK is the member's filer at a date only if it filed an annual report in the 18 months before
+  history_needed_from: "2014-10-01"         # older submissions pages are fetched only when 'recent' starts after this
+  max_name_candidates: 40                   # candidates per company searched by name (exact matches first); tests below decide
+  v1_chains: config/universe.yaml           # Version 1's verified registrant chains (AVGO <- Broadcom Ltd <- Avago; MRVL), used instead of name search
+  name_aliases:                             # V2-D10: EDGAR filer names a security (or a ticker) is ALSO searched under (adds to the Wikipedia name);
+    # a found filer must still report in the window, carry a matching name on that date and not have deregistered (V2-D9)
+    "CR Bard": "BARD C R"
+    "CA Technologies": ["COMPUTER ASSOCIATES INTERNATIONAL", "CA, INC."]
+    "TSYS": "TOTAL SYSTEM SERVICES"
+    "XL Group": "XL CAPITAL"
+    "21st Century Fox": "TWENTY FIRST CENTURY FOX"          # I-85: names added after Kyan's first V2.2 run (2026-11-18)
+    "APA Corporation": "APACHE"                           # holding company formed 2021; Apache Corp before
+    "ExxonMobil": "EXXON MOBIL"
+    "Skydance": ["PARAMOUNT GLOBAL", "VIACOMCBS", "CBS"]  # CBS Corp -> ViacomCBS -> Paramount Global -> Paramount Skydance (not the REIT Paramount Group)
+    "Smurfit Westrock": "WESTROCK"
+    "Viatris": "MYLAN"
+    "TechnipFMC": "FMC TECHNOLOGIES"
+    "Bunge Global": ["BUNGE", "BUNGELTD"]                 # Bunge Ltd files as 'BUNGELTD' (no space) before the 2023 redomicile
+    "Dow Inc.": "DOW CHEMICAL"
+    "DD": "DUPONT E I DE NEMOURS & CO"                    # by ticker: DD before the 2017 merger was E. I. du Pont (EDGAR's spelling)
+    "DWDP": "DOWDUPONT"                                   # by ticker: DWDP 2017-2019 was DowDuPont Inc.
+    "Walt Disney Company (The)": "TWDC ENTERPRISES 18"    # the pre-2019 Disney filer, renamed when the new holding company formed
+    "Linde plc": "PRAXAIR"
+  sic_sectors:                              # V2-D11: approximate GICS sector from SEC SIC code, for companies no longer in the index only
+    # [from, to, sector]; first matching range wins; checked against Wikipedia GICS for current members (check S4)
+    - [6500, 6553, "Real Estate"]
+    - [6798, 6798, "Real Estate"]
+    - [6000, 6799, "Financials"]
+    - [100, 999, "Consumer Staples"]
+    - [1000, 1099, "Materials"]
+    - [1200, 1399, "Energy"]
+    - [1400, 1499, "Materials"]
+    - [1531, 1531, "Consumer Discretionary"]
+    - [1500, 1799, "Industrials"]
+    - [2000, 2199, "Consumer Staples"]
+    - [2200, 2399, "Consumer Discretionary"]
+    - [2400, 2499, "Materials"]
+    - [2500, 2599, "Consumer Discretionary"]
+    - [2600, 2699, "Materials"]
+    - [2700, 2799, "Communication Services"]
+    - [2830, 2836, "Health Care"]
+    - [2840, 2844, "Consumer Staples"]
+    - [2800, 2899, "Materials"]
+    - [2900, 2999, "Energy"]
+    - [3000, 3099, "Materials"]
+    - [3100, 3199, "Consumer Discretionary"]
+    - [3200, 3399, "Materials"]
+    - [3400, 3569, "Industrials"]
+    - [3570, 3579, "Information Technology"]
+    - [3580, 3629, "Industrials"]
+    - [3630, 3639, "Consumer Discretionary"]
+    - [3640, 3649, "Industrials"]
+    - [3650, 3659, "Consumer Discretionary"]
+    - [3660, 3699, "Information Technology"]
+    - [3700, 3719, "Consumer Discretionary"]
+    - [3720, 3819, "Industrials"]
+    - [3820, 3839, "Information Technology"]
+    - [3840, 3859, "Health Care"]
+    - [3860, 3899, "Information Technology"]
+    - [3900, 3999, "Consumer Discretionary"]
+    - [4000, 4799, "Industrials"]
+    - [4800, 4899, "Communication Services"]
+    - [4950, 4959, "Industrials"]
+    - [4900, 4999, "Utilities"]
+    - [5122, 5122, "Health Care"]
+    - [5000, 5099, "Industrials"]
+    - [5100, 5199, "Consumer Staples"]
+    - [5400, 5499, "Consumer Staples"]
+    - [5912, 5912, "Consumer Staples"]
+    - [5200, 5999, "Consumer Discretionary"]
+    - [7000, 7099, "Consumer Discretionary"]
+    - [7200, 7299, "Consumer Discretionary"]
+    - [7370, 7379, "Information Technology"]
+    - [7300, 7399, "Industrials"]
+    - [7500, 7599, "Consumer Discretionary"]
+    - [7990, 7999, "Consumer Discretionary"]
+    - [7800, 7989, "Communication Services"]
+    - [8000, 8099, "Health Care"]
+    - [8700, 8799, "Industrials"]
+facts:                                      # V2.3: point-in-time annual facts (V2-D12)
+  annual_days: [350, 380]                   # a fiscal year (52/53 weeks)
+  fy_match_days: 20                         # FY-k is the year ending within 20 days of FY0 end minus k years
+  stale_after_days: 456                     # latest FY must end within 15 months of the date, or the company has no current data
+  filed_before_date: true                   # a filing counts only if filed strictly before the rebalance date
+  line_items:                               # tried in order per fiscal year, first concept with a value wins; latest-filed value as of the date
+    revenue: [Revenues, RevenueFromContractWithCustomerExcludingAssessedTax, RevenueFromContractWithCustomerIncludingAssessedTax, SalesRevenueNet, SalesRevenueGoodsNet]
+    cost_of_revenue: [CostOfRevenue, CostOfGoodsAndServicesSold, CostOfGoodsSold]
+    gross_profit: [GrossProfit]             # if missing: revenue - cost_of_revenue, labelled derived
+    operating_income: [OperatingIncomeLoss]       # if missing: pretax income + interest expense (EBIT), labelled derived
+    interest_expense: [InterestExpense, InterestExpenseNonoperating, InterestExpenseDebt, InterestAndDebtExpense]
+    net_income: [NetIncomeLoss, NetIncomeLossAvailableToCommonStockholdersBasic, ProfitLoss]
+    eps_diluted: [EarningsPerShareDiluted, EarningsPerShareBasicAndDiluted]
+    shares_diluted: [WeightedAverageNumberOfDilutedSharesOutstanding, WeightedAverageNumberOfShareOutstandingBasicAndDiluted, WeightedAverageNumberOfSharesOutstandingBasic]
+    pretax_income: [IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest, IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments]
+    income_tax: [IncomeTaxExpenseBenefit]
+    operating_cash_flow: [NetCashProvidedByUsedInOperatingActivities, NetCashProvidedByUsedInOperatingActivitiesContinuingOperations]
+    capex: [PaymentsToAcquirePropertyPlantAndEquipment, PaymentsToAcquireProductiveAssets, PaymentsToAcquireOtherPropertyPlantAndEquipment]
+    d_and_a: [DepreciationDepletionAndAmortization, DepreciationAndAmortization, DepreciationAmortizationAndAccretionNet, UtilitiesOperatingExpenseDepreciationAndAmortization]
+    depreciation: [Depreciation]                  # if no D&A total: depreciation + amortization of intangibles, labelled derived
+    amortization: [AmortizationOfIntangibleAssets, AdjustmentForAmortization]
+    current_assets: [AssetsCurrent]
+    current_liabilities: [LiabilitiesCurrent]
+    inventory: [InventoryNet]               # missing: 0, flagged
+    equity: [StockholdersEquity, StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest]
+    cash: [CashAndCashEquivalentsAtCarryingValue, CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents]
+    st_investments: [ShortTermInvestments, DebtSecuritiesCurrent, MarketableSecuritiesCurrent, AvailableForSaleSecuritiesDebtSecuritiesCurrent]   # missing: 0, flagged
+    debt_current: [DebtCurrent, LongTermDebtCurrent, LongTermDebtAndCapitalLeaseObligationsCurrent, ShortTermBorrowings]   # missing: 0, flagged
+    debt_noncurrent: [LongTermDebtNoncurrent, LongTermDebtAndCapitalLeaseObligations, LongTermNotesPayable]   # missing: a total-debt concept if tagged, else 0, flagged
+    debt_total_fallback: [LongTermDebt, DebtAndCapitalLeaseObligations, DebtLongtermAndShorttermCombinedAmount]
+  instant_items: [current_assets, current_liabilities, inventory, equity, cash, st_investments, debt_current, debt_noncurrent, debt_total_fallback]
+  zero_if_missing: [inventory, st_investments, debt_current]
+  statutory_tax_rate: 0.21                  # V1 rule: used when the effective rate is unavailable or outside 0-100%
+prices:                                     # V2.4: daily prices (yfinance; Yahoo Finance)
+  start: "2015-01-01"
+  extra_symbols: [SPY]
+  raw_dir_name: prices                      # under the bulk data folder
+  seconds_between_requests: 0.4
+scores:                                     # V2.5 (V2-D13, V2-D14)
+  min_tests_scored: 7                       # of 9; fewer and the company is not ranked at that date
+  impute_missing: sector_median_points      # V2-D13 (revised 2026-11-18, before any backtest was run): a test that cannot be scored
+                                            # takes the median points of its sector's scored companies on that test at that date,
+                                            # so a data gap neither helps (insurers, negative equity) nor hurts; rank on total points of 18
+  one_line_per_company: true                # dual share classes (GOOG/GOOGL, FOX/FOXA, NWS/NWSA): keep one ticker per CIK
+  tests:                                    # Step 4 thresholds; PEG dropped; ROIC vs a fixed hurdle (V2-D3)
+    1: {name: "Revenue growth, 5-yr CAGR",    metric: revenue_cagr_5y,     direction: higher, pass: 0.10, near: 0.05}
+    2: {name: "P/E (trailing, latest FY)",    metric: pe_fy,               direction: lower,  pass: 25,   near: 35,  fail_when_null: "latest FY diluted EPS <= 0"}
+    4: {name: "ROE, 5-yr average",            metric: roe_5y_avg,          direction: higher, pass: 0.15, near: 0.10}
+    5: {name: "Quick ratio",                  metric: quick_ratio,         direction: higher, pass: 1.5,  near: 1.0}
+    6: {name: "Gross margin vs sector median", metric: gross_margin_vs_sector, direction: higher, pass: 0, near: -0.05}
+    7: {name: "FCF conversion (FCF / NI)",    metric: fcf_conversion,      direction: higher, pass: 0.90, near: 0.70, fail_when_null: "net income <= 0"}
+    8: {name: "Net debt / EBITDA",            metric: net_debt_to_ebitda,  direction: lower,  pass: 1,    near: 2,   fail_when_null: "EBITDA <= 0"}
+    9: {name: "ROIC (fixed hurdle)",          metric: roic,                direction: higher, pass: 0.15, near: 0.10}
+    10: {name: "Share count, 5-yr change",    metric: shares_change_5y,    direction: lower,  pass: -0.02, near: 0.02}
+  v1_reconcile:                             # V2 engine vs Version 1 (Step 3 exports) for the six companies, same fiscal year
+    metrics: [revenue_cagr_5y, gross_margin, roe_5y_avg, quick_ratio, fcf_conversion, net_debt_to_ebitda, roic, shares_change_5y]
+    abs_tol: 0.005
+    min_share_agreeing: 0.85
+backtest_v2:                                # V2.6 (V2-D15, V2-D16)
+  universe_benchmark: true                  # equal-weight all ranked companies: same data, same survivorship limits as the portfolio
+  rf: 0.0                                   # Sharpe on excess over 0, labelled
+  trading_days: 252

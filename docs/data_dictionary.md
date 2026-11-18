@@ -202,3 +202,52 @@ Written by `python/run_step9.py` from `docs/memo/memo_template.md`, `config/memo
 | `data/clean/step9/manifest_step9.json` | Run time, output hashes, checks M1–M6 |
 | `data/clean/step9/m9_check_report.txt` | Full Step 9 status report from `python/m9_check.py` |
 | `excel/NVDA_Simple_DCF.xlsx` | Base-case workbook in a simple template layout (Company Comparison, Statements Model, DCF), from `python/build_simple_dcf.py` (S9-D7) |
+
+# Version 2, V2.1 outputs (`data/clean/v2/universe/`)
+
+Written by `python/run_v2_universe.py` from a `fetch_v2_universe.py` collection in `data/raw/v2/universe/<id>/` (Wikipedia
+pages "List of S&P 500 companies" and "Historical components of the S&P 500" as HTML, SEC `company_tickers.json`, SEC
+`cik-lookup-data.txt`, with `collection_manifest.csv` and `collection_info.json`).
+
+| File | Contents |
+|---|---|
+| `constituents_current.csv` | ticker, security, sector (GICS), sub_industry, date_added, cik (10 digits), as on the collection date |
+| `changes.csv` | date (effective), added_ticker, added_security, removed_ticker, removed_security, reason; combined from every table on either page whose headings say date / added / removed (I-75) |
+| `ticker_changes.csv` | old_ticker, old_security, ticker (the member's ticker now), security, added_date, basis (date_added, same_name, shared_cik), cik: tickers changed after joining, linked on evidence (I-76) |
+| `membership.csv` | date (each 1 April and 1 July 2016–2026 that has passed, plus the collection date; July dates for the V2.7 robustness test), ticker, security, cik (V2.1 mapping), cik_basis, sector (today's members only; V2.2 adds the rest), excluded_sector |
+| `ciks.csv` | every company ever in the universe since 2016: ticker, security, cik, cik_basis (wikipedia; sec_ticker, only where SEC's names agree; sec_name; sec_name_shared, a renamed company's CIK listed under both names; unmapped), in_current |
+| `coverage.csv` | per date: members, with_cik, from_current (members with a known sector), cik_coverage |
+| `warnings.txt` | contradictions met while undoing changes (U7) |
+| `manifest_v2_universe.json` | collection used, output hashes, checks U1–U8 |
+
+# Version 2, V2.2–V2.8 outputs
+
+Bulk downloads live outside OneDrive in the folder named by `NVDA_V2_DATA`, else `%LOCALAPPDATA%\nvda-data\v2` (V2-D7):
+`sec\submissions\CIK##########.json.gz` (and older pages), `sec\companyfacts\CIK##########.json.gz`, `sec\manifest.csv`
+(every request: URL, status, bytes, SHA-256 of the bytes received), `sec\candidates.json` (name-matched filers tried per
+ticker), `facts\facts_v2.csv.gz`, `prices\<collection>\prices_<TICKER>.csv` with `collection_manifest.csv`, and
+`prices\prices_v2.csv.gz`. Files are stored gzip-compressed exactly as received.
+
+| File (`data/clean/v2/…`) | Contents |
+|---|---|
+| `sec/cik_by_date.csv` | date, ticker, security, cik_pit (the filer at that date), pit_basis (v21_cik_annual_report; edgar_name_annual_report; no_annual_report_in_window; ambiguous; unresolved), edgar_name, sic, sector, sector_basis (wikipedia_gics or "sic NNNN"), excluded_sector, cik_v21, cik_basis_v21, n_qualifying, note (V2-D9 to V2-D11) |
+| `sec/unresolved.csv` | the rows of cik_by_date without a usable filer |
+| `sec/sic_check.csv` | current members: GICS sector vs the SIC-mapped sector (check S4) |
+| `sec/coverage_sec.csv` | per date: members, resolved, with_sector, resolved_share |
+| `facts/concept_coverage.csv` | per line item: companies with any value, share, companies per concept (F3) |
+| `facts/v1_fact_check.csv` | ticker, line_item, concept, period_end, v1_value, v2_value, agree, note: Version 1's annual values vs V2's extraction (F4) |
+| `prices/price_coverage.csv` | per date: trade_date, members_resolved (outside excluded sectors), with_price, ticker_reused, price_share (P2) |
+| `prices/price_flags.csv` | ticker, security, cik_pit, issue (history not used; large daily move), detail |
+| `scores/scores_by_date.csv` | one row per company per date: date, trade_date, ticker, security, cik, sector, sector_basis, price_as_traded, price_note, fy0_end, fy0_filed, fy0_accn, stale, revenue, revenue_cagr_5y, gross_margin, sector_gm_median, gross_margin_vs_sector, roe, roe_5y_avg, quick_ratio, net_income, fcf_conversion, net_debt_to_ebitda, roic, operating_income, ebitda, shares_change_5y, pe_fy, fail_reasons, flags, other_classes, t1–t10 (points per test; blank = not scored; no t3, PEG dropped), points (scored tests only), tests_scored, max_points, imputed_points (sector-median points for unscored tests), score_total (points + imputed, of 18), score_pct (score_total / 18), ranked, why_not_ranked, rank (V2-D12 to V2-D14) |
+| `scores/screener_today.csv` | the same columns for the latest date (the live screen) |
+| `scores/v1_reconcile.csv` | ticker, fy_end, metric, v1, v2, diff, agree, note: the six companies, V2 engine vs Version 1 ratios (C2) |
+| `backtest/nav_daily.csv` | date, strategy (top 30, net of costs), universe_ew, spy: value of $1 |
+| `backtest/periods.csv` | start, end, holdings, turnover, cost, return (net), ended_early, universe_ew, spy, excess_vs_spy, excess_vs_universe |
+| `backtest/holdings.csv` | trade_date, period_end, rank, ticker, security, sector, score_total, tests_scored, roic, return over the period, prices_end_early |
+| `backtest/stats.csv` | per series: start, end, years, total_return, cagr, volatility, sharpe (rf 0), max_drawdown, tracking_error and information_ratio vs SPY |
+| `backtest/robustness.csv` | variant, cagr, volatility, sharpe, max_drawdown, information_ratio, vs_spy_cagr, note (V2.7) |
+| `backtest/random_cagrs.csv` | CAGR of each random 30-stock portfolio |
+| `manifest_v2_*.json` | per phase: inputs, output hashes, checks with level |
+
+Deliverables (committed): `excel/SP500_Screener.xlsx` (Read me, Screener, Backtest, Holdings, Robustness, Data quality),
+`docs/v2/v2_results.md`, `docs/v2/exhibits/v2_growth.svg`, all written by `python/run_v2_report.py` (checks R1–R4).
