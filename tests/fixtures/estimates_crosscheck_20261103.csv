@@ -1,0 +1,3 @@
+ticker,kind,period,reference_avg,tolerance_pct,source,source_url,as_of,entered_by,entered_on,notes
+NVDA,eps,0y,9.30,5,Nasdaq earnings forecast (yearly consensus EPS),https://api.nasdaq.com/api/analyst/NVDA/earnings-forecast,2026-11-03,"Claude, read in Kyan's built-in browser",2026-11-03,Fiscal year end Jan 2027 = NVIDIA FY2027 (Yahoo 0y); 17 estimates; Yahoo 9.31242 (51 analysts)
+NVDA,eps,+1y,15.74,5,Nasdaq earnings forecast (yearly consensus EPS),https://api.nasdaq.com/api/analyst/NVDA/earnings-forecast,2026-11-03,"Claude, read in Kyan's built-in browser",2026-11-03,Fiscal year end Jan 2028 = NVIDIA FY2028 (Yahoo +1y); 15 estimates; Yahoo 15.9146 (52 analysts)

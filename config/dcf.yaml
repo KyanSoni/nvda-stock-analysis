@@ -13,12 +13,12 @@ cost_of_debt: "Base-case Y1 interest rate on debt and tax rate from the model's 
 terminal:
   growth: 0.03                          # S6-D3 headline: perpetuity growth on year-5 unlevered FCF
   exit_multiple_source: "median LTM EV/EBITDA of the other peers at the cutoff (Step 3 v_valuation_cutoff), AMD excluded (fiscal-year EBITDA basis, S3-D11)"
-scenario_weights: {Bear: 0.25, Base: 0.50, Bull: 0.25}   # S6-D4
+scenario_weights: {Bear: 0.35, Base: 0.45, Bull: 0.20}   # R-D3 (refresh, 19 Nov 2026): was 25/50/25 (S6-D4); more weight on Bear for the CEO resignation, the board's independent investigation and the Q3 10-Q not filed with the results
 non_operating_assets:                   # S6-D5: added to equity value, labelled
   NVDA:
     marketable_equity_securities:
       value: 42783
-      source: "NVIDIA 10-Q Q2 FY2027 (accession 0001045810-26-000075), balance sheet: Marketable equity securities, 26 Jul 2026"
+      source: "NVIDIA 10-Q Q2 FY2027 (accession 0001045810-26-000075), balance sheet: Marketable equity securities, 26 Jul 2026. Refresh R-D4: kept at the Q2 10-Q date so it matches the rest of the balance sheet (cash, investments, debt, shares); the Q3 press release shows 44,219 at 25 Oct 2026, to be taken with the Q3 10-Q (Stage B)"
 sensitivity:
   wacc: [0.10, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16]
   growth: [0.02, 0.025, 0.03, 0.035, 0.04]

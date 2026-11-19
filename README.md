@@ -1,23 +1,26 @@
-# NVIDIA (NVDA): Buy, 12-month target $260
+# NVIDIA (NVDA): Buy, 12-month target $245
 
 **Question:** does NVIDIA's position in AI computing justify the future cash flows its share price implies?
 
-**Answer:** on its own cash flows, only at a 12.05% discount rate (the model uses 13.87%). Against its peers, yes: NVIDIA
-trades at 14.0× next-twelve-month earnings against a peer median of 26.1×, despite the group's highest growth (107%) and
-gross margin (75%). Blending a DCF ($157.47) and comparable companies ($338.80) 50/50, with the DCF rolled forward a year,
-gives a **12-month target of $260, +28.7% on $202.06 (2 Nov 2026 close): Buy**. The rating rests on relative value; the DCF
-is the limit on how far it leans.
+**Answer (updated 19 Nov 2026 for the Q3 FY2027 results):** yes on the Base case, which is worth $171.58 a share against
+$150.96; the price only balances it at a 15.54% discount rate (the model uses 14.01%). The shares fell 25% after the CEO
+resigned on 11 Nov, while Q3 beat its guidance and FY2028 consensus rose, so the model reads the fall as a governance
+discount. NVIDIA trades at 9.9× next-twelve-month earnings against a peer median of 21.6×, despite the group's highest
+growth (121%) and gross margin (75%). Blending a DCF ($146.40, with 35% weight now on the Bear case) and comparable
+companies ($324.84) 50/50, with the DCF rolled forward a year, gives a **12-month target of $245, +63.0% on $150.96
+(18 Nov 2026 close): Buy** (was $260 on 9 Nov). The Q3 10-Q, due 4 Dec, has not been filed; the memo says when the rating
+would be suspended.
 
 📄 **[Read the two-page investment memo (PDF)](docs/memo/NVDA_investment_memo.pdf)** · [Markdown version](docs/memo/NVDA_investment_memo.md)
 
 ![Football field: value per share by method, with the price and the target](docs/memo/exhibits/football_field.svg)
 
-| | Value per share | vs $202.06 |
+| | Value per share | vs $150.96 |
 |---|---:|---:|
-| DCF, probability-weighted (Bear $66 / Base $168 / Bull $227) | $157.47 | −22% |
-| Comps: peer-median NTM P/E and NTM EV/EBITDA | $338.80 | +68% |
-| What the price implies | WACC 12.05%, or terminal growth 5.35%, or FY2028 Data Center growth 110% | |
-| **12-month target** (50% DCF rolled forward + 50% comps) | **$260** | **+28.7%** |
+| DCF, probability-weighted 35/45/20 (Bear $70 / Base $172 / Bull $223) | $146.40 | −3% |
+| Comps: peer-median NTM P/E and NTM EV/EBITDA | $324.84 | +115% |
+| What the price implies for the Base case | WACC 15.54%, or terminal growth 0.8%, or FY2028 Data Center growth 52% | |
+| **12-month target** (50% DCF rolled forward + 50% comps) | **$245** | **+63.0%** |
 
 ## How it is built
 
@@ -63,11 +66,15 @@ is not built yet.
 
 ## Limitations
 
-- Priced at the 2 Nov 2026 cutoff; NVIDIA's Q3 FY2027 results (17 Nov 2026) are the next update (I-69).
+- Refreshed to the 18 Nov 2026 cutoff for NVIDIA's Q3 FY2027 results (decisions R-D1 to R-D7). FY2027 uses the 17 Nov press
+  release (unaudited) because the Q3 10-Q is not yet filed; the balance sheet, share count and LTM figures stay at the Q2
+  10-Q until it is (I-91, refresh Stage B).
+- Yahoo's FY2028 EPS consensus is 6.4% above Nasdaq's on 19 Nov, outside the 5% cross-check tolerance; on Nasdaq's
+  figure the comps value is about $9 lower and the rating is unchanged (I-90).
 - The DCF has a five-year explicit period and 3% terminal growth; with these inputs every company in the group values
   below its price (I-60), which is why the rating rests on relative value. A longer fade period is planned (I-70).
 - The peer median P/E is lifted by companies whose earnings are recovering (I-65); the memo states the full comps range
-  ($222–$375).
+  ($197–$331).
 - Peer forecasts are mechanical; NVIDIA's are researched (S5-D6).
 
 This is a portfolio project, not investment advice.

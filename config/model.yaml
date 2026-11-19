@@ -8,36 +8,37 @@ forecast_years: 5
 scenarios: [Bear, Base, Bull]
 
 sources:
-  consensus: "Yahoo Finance consensus via yfinance, snapshot 20261103T180459Z (Step 4): FY2027 revenue $411.7bn, FY2028 $692.2bn"
+  consensus: "Yahoo Finance consensus via yfinance, snapshot 20261119T171246Z (Step 4, after Q3 results): FY2027 revenue $424.0bn, FY2028 $724.7bn (refresh R-D2; the 20261103T180459Z snapshot gave $411.7bn and $692.2bn)"
+  q3fy27_release: "NVIDIA Q3 FY2027 results press release, 17 Nov 2026 (8-K, accession 0001045810-26-000088), unaudited, 10-Q not yet filed: Q3 revenue $115,844m (Data Center $107.6bn, Edge Computing $8.2bn), GAAP gross margin 74.8%; 9M FY2027 revenue $293,681m, gross profit $219,976m, R&D $20,829m, SG&A $4,356m; Q3 dividends $6,026m ($0.25 a share quarterly). Q4 FY2027 outlook: revenue $130.0bn +/-3% (includes an extra week; no China Data Center compute), GAAP gross margin 71-72%, GAAP opex ~$11.0bn, FY2027 tax rate 16-18%"
   q2fy27_release: "NVIDIA Q2 FY2027 results, 26 Aug 2026: Q3 FY2027 outlook revenue $108.0bn +/-2%, GAAP gross margin 74.0% +/-0.5pt, GAAP opex ~$9.2bn; FY2027 tax rate 16-18% (https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000073/q2fy27pr.htm)"
   q2fy27_10q: "NVIDIA 10-Q for Q2 FY2027 (accession 0001045810-26-000075): H1 FY2027 Data Center revenue $164,269m, Edge Computing $13,568m; proceeds from issuance of debt, net $24,896m (H1); $25.0bn senior notes issued June 2026"
 
 NVDA:
   datacenter_growth:     # segment A = Data Center
-    Bear: [0.85, 0.20, -0.10, -0.05, 0.03]
-    Base: [0.98, 0.722, 0.25, 0.12, 0.06]
-    Bull: [1.02, 0.85, 0.35, 0.18, 0.10]
-    reason: "Base FY2027-FY2028 set so total revenue equals consensus ($411.7bn, $692.2bn) given the Edge assumption; then a fade as AI capex matures. Bear FY2027 = H1 actuals + Q3 guidance low end + a flat Q4, then a capex digestion year in FY2029. Bull = Vera Rubin ramp beats consensus"
+    Bear: [1.0081, 0.20, -0.10, -0.05, 0.03]
+    Base: [1.0268, 0.7572, 0.25, 0.12, 0.06]
+    Bull: [1.0455, 0.85, 0.35, 0.18, 0.10]
+    reason: "Refresh R-D1: FY2027 = 9M actuals (H1 10-Q + Q3 press release) + Q4 at the guidance low end / midpoint / high end ($126.1bn / $130.0bn / $133.9bn), split between segments at Q3's Data Center share (92.9%). Base FY2028 set so total revenue equals the 19 Nov consensus ($724.7bn) given the Edge assumption; then a fade as AI capex matures. Bear keeps a capex digestion year in FY2029; Bull = Vera Rubin ramp beats consensus"
   edge_growth:           # segment B = Edge Computing
-    Bear: [0.20, 0.05, 0.03, 0.03, 0.03]
-    Base: [0.26, 0.12, 0.10, 0.08, 0.06]
-    Bull: [0.28, 0.15, 0.12, 0.10, 0.08]
-    reason: "H1 FY2027 Edge Computing +28% year on year (10-Q); base keeps that pace for FY2027, then slows toward PC/gaming market growth"
+    Bear: [0.3827, 0.05, 0.03, 0.03, 0.03]
+    Base: [0.3951, 0.12, 0.10, 0.08, 0.06]
+    Bull: [0.4076, 0.15, 0.12, 0.10, 0.08]
+    reason: "Refresh R-D1: FY2027 = 9M actuals ($21.8bn) + Q4 at Q3's Edge share (7.1%) of the guidance low / mid / high; Q3 Edge $8.2bn was well above the H1 run rate. Later years unchanged: slowing toward PC/gaming market growth"
   gross_margin:
-    Bear: [0.740, 0.710, 0.680, 0.660, 0.650]
-    Base: [0.745, 0.740, 0.730, 0.720, 0.710]
-    Bull: [0.750, 0.750, 0.750, 0.745, 0.740]
-    reason: "Q3 FY2027 guidance 74.0% GAAP; FY2026 was 71.1% (incl. inventory charges). Base drifts down 1pt a year as competition and memory costs bite; bear assumes custom-chip price pressure"
+    Bear: [0.7373, 0.700, 0.670, 0.650, 0.640]
+    Base: [0.7386, 0.720, 0.715, 0.710, 0.700]
+    Bull: [0.7399, 0.735, 0.735, 0.730, 0.725]
+    reason: "Refresh R-D1: FY2027 = 9M gross profit ($219,976m) + Q4 at 71% / 71.5% / 72% of the low / mid / high revenue guide. Q4 guide of 71-72% is ~3pt below Q3's 74.8% as Vera Rubin ramps and memory costs rise, so later years start about 2pt lower than before (Base 72% in FY2028, down 0.5-1pt a year); bear assumes custom-chip price pressure on top"
   rd_pct_revenue:
-    Bear: [0.070, 0.078, 0.090, 0.098, 0.100]
-    Base: [0.068, 0.065, 0.068, 0.072, 0.075]
-    Bull: [0.066, 0.062, 0.063, 0.065, 0.067]
-    reason: "FY2026 8.6% of revenue; Q3 FY2027 GAAP opex guide ~$9.2bn on $108bn (8.5% total opex, ~80% of it R&D). Ratio rises as growth slows because R&D spend is sticky"
+    Bear: [0.0710, 0.078, 0.090, 0.098, 0.100]
+    Base: [0.0703, 0.065, 0.068, 0.072, 0.075]
+    Bull: [0.0697, 0.062, 0.063, 0.065, 0.067]
+    reason: "Refresh R-D1: FY2027 = 9M R&D ($20,829m) + Q4 GAAP opex guide ~$11.0bn at Q3's R&D share of opex (81.4%), over FY2027 revenue in each case. FY2026 8.6% of revenue. Ratio rises as growth slows because R&D spend is sticky"
   sga_pct_revenue:
-    Bear: [0.018, 0.020, 0.023, 0.025, 0.025]
-    Base: [0.017, 0.016, 0.017, 0.018, 0.019]
-    Bull: [0.016, 0.015, 0.015, 0.016, 0.017]
-    reason: "FY2026 2.1% of revenue; scale benefit while revenue grows, partly reversed later"
+    Bear: [0.0152, 0.020, 0.023, 0.025, 0.025]
+    Base: [0.0151, 0.016, 0.017, 0.018, 0.019]
+    Bull: [0.0150, 0.015, 0.015, 0.016, 0.017]
+    reason: "Refresh R-D1: FY2027 = 9M SG&A ($4,356m) + the rest (18.6%) of the ~$11.0bn Q4 opex guide. FY2026 2.1% of revenue; scale benefit while revenue grows, partly reversed later"
   other_opex_pct_revenue:
     Bear: [0, 0, 0, 0, 0]
     Base: [0, 0, 0, 0, 0]
@@ -47,7 +48,7 @@ NVDA:
     Bear: [0.035, 0.035, 0.035, 0.035, 0.035]
     Base: [0.040, 0.040, 0.040, 0.040, 0.040]
     Bull: [0.045, 0.045, 0.045, 0.045, 0.045]
-    reason: "Interest income / opening cash and short-term investments was 5.3% in FY2026; base assumes lower short rates, close to the 10-year Treasury (4.91% at the cutoff) less a term spread"
+    reason: "Interest income / opening cash and short-term investments was 5.3% in FY2026; base assumes lower short rates, close to the 10-year Treasury (4.91% at the 2 Nov cutoff, 5.07% at the 18 Nov refresh cutoff) less a term spread; unchanged in the refresh"
   cost_of_debt:
     Bear: [0.045, 0.045, 0.045, 0.045, 0.045]
     Base: [0.040, 0.040, 0.040, 0.040, 0.040]
@@ -94,10 +95,10 @@ NVDA:
     Bull: [0.60, 0.60, 0.60, 0.60, 0.60]
     reason: "FY2026 buybacks 40,086 = 41% of FCF (96,676); cash keeps building, so a higher share is likely"
   dividend_payout:
-    Bear: [0.008, 0.008, 0.008, 0.008, 0.008]
-    Base: [0.008, 0.008, 0.008, 0.008, 0.008]
-    Bull: [0.008, 0.008, 0.008, 0.008, 0.008]
-    reason: "FY2026 dividends 974 = 0.8% of net income; token dividend kept"
+    Bear: [0.081, 0.098, 0.114, 0.123, 0.120]
+    Base: [0.079, 0.062, 0.050, 0.044, 0.042]
+    Bull: [0.077, 0.056, 0.041, 0.034, 0.031]
+    reason: "Refresh R-D5 / issue I-89: the dividend rose to $0.25 a share a quarter from Q2 FY2027 (FY2026 paid 974 = 0.8% of net income, which the original assumption kept). Payouts are set so dividends hold at the current rate: FY2027 = 9M paid $12,316m + Q4 at Q3's $6,026m = $18,342m; later years $1.00 a share on each scenario's diluted shares; each divided by that scenario's forecast net income (so the payout rises in Bear and falls in Bull). No dividend growth assumed"
   share_change:
     Bear: [-0.003, -0.003, -0.003, -0.003, -0.003]
     Base: [-0.008, -0.008, -0.008, -0.008, -0.008]
@@ -107,7 +108,7 @@ NVDA:
     Bear: [24896, 0, 0, 0, 0]
     Base: [24896, 0, 0, 0, 0]
     Bull: [24896, 0, 0, 0, 0]
-    reason: "H1 FY2027 net proceeds from debt issuance $24,896m (Q2 FY2027 10-Q); no further issuance or repayment assumed (maturities refinanced)"
+    reason: "H1 FY2027 net proceeds from debt issuance $24,896m (Q2 FY2027 10-Q); no further issuance or repayment assumed (maturities refinanced). Q3 financing flows to be checked against the Q3 10-Q (refresh Stage B)"
 
 peer_defaults:           # S5-D6: mechanical, not argued; reasons are written by the generator
   terminal_growth: 0.05          # revenue growth fades linearly from the year-2 consensus growth to this by year 5

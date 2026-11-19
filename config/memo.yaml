@@ -9,23 +9,54 @@ target:                                  # S9-D1
 rating_bands:                            # S9-D2: 12-month expected total return = target / price - 1 + dividend yield
   buy_above: 0.15
   sell_below: -0.10
-guidance:                                # quoted in the thesis and catalysts
-  q3_fy27_revenue_bn: 108.0
-  q3_fy27_gross_margin: 0.740
-  source: "NVIDIA Q2 FY2027 results, 26 Aug 2026 (https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000073/q2fy27pr.htm), as in config/model.yaml"
+results:                                 # refresh R-D1: the last reported quarter against its guidance
+  quarter: "Q3 FY2027"
+  revenue_m: 115844
+  gross_profit_m: 86676
+  datacenter_bn: 107.6
+  guide_revenue_bn: 108.0                # given 26 Aug 2026 with Q2 results
+  guide_gross_margin: 0.740
+  source: "NVIDIA Q3 FY2027 results press release, 17 Nov 2026 (8-K, accession 0001045810-26-000088), unaudited; the Q3 10-Q is not yet filed. Guide: Q2 FY2027 results, 26 Aug 2026 (https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000073/q2fy27pr.htm)"
+guidance:                                # quoted in the thesis and risks: the next quarter
+  quarter: "Q4 FY2027"
+  revenue_bn: 130.0
+  gross_margin_low: 0.71
+  gross_margin_high: 0.72
+  source: "NVIDIA Q3 FY2027 results press release, 17 Nov 2026 (8-K, accession 0001045810-26-000088): revenue $130.0bn +/-3% (includes an extra week; no China Data Center compute), GAAP gross margin 71-72%, as in config/model.yaml"
+dividend:                                # refresh R-D5 (I-89): yield on the dividend now being paid, not FY2026's
+  per_share_quarterly: 0.25
+  source: "NVIDIA Q3 FY2027 results press release (dividends paid $6,026m in Q3) and SEC companyfacts: $0.25 a share each quarter since Q2 FY2027"
+previous:                                # the memo this refresh replaces (for 'what changed')
+  memo_date: "2026-11-09"
+  price: 202.06
+  price_date: "2026-11-02"
+  rating: "Buy"
+  target: 260
+  pe_rel: 0.538292
+  cons_fy28_bn: 692.2
+  source: "docs/memo/NVDA_investment_memo.md and data/clean/step9/memo_numbers.csv as committed with Step 9 (memo dated 9 Nov 2026)"
+leadership:                              # refresh: facts quoted in the memo, each with its source
+  event: "Jensen Huang resigned as President, CEO and director on 11 Nov 2026; CFO Colette Kress is interim CEO and Harvey Jones is Chair"
+  source: "NVIDIA 8-K of 12 Nov 2026, accession 0001045810-26-000082, item 5.02"
+  short_source: "8-K, 12 Nov 2026"
+  investigation: "The board opened an independent investigation on 8 Nov, led by Wachtell, Lipton (company statements as reported, not a filing)"
+  investigation_source: "Constellation Research, 12 Nov 2026, quoting NVIDIA's statements (https://www.constellationr.com/insights/news/nvidia-ceo-huang-resigns-kress-becomes-interim-ceo-looming-questions-abound)"
+  tenq: "The Q3 10-Q was not filed with the 17 Nov results; every 10-Q and 10-K since February 2024 was filed the same day as the results (EDGAR submissions, collection 20261119T170207Z)"
+  tenq_due: "4 Dec 2026"
+  tenq_due_basis: "40 days after the 25 Oct 2026 quarter end (large accelerated filer); a Form 12b-25 notice would extend it 5 days"
 catalysts:                               # S9-D5: verified dates only; 'expected' where the company has not announced one
-  - when: "17 Nov 2026"
-    what: "Q3 FY2027 results (conference call 2 p.m. PT)"
-    source: "https://nvidianews.nvidia.com/news/nvidia-sets-conference-call-for-third-quarter-financial-results-6928873 (checked 2026-11-09)"
-  - when: "Fall 2026"
-    what: "Vera Rubin production shipments begin"
-    source: "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Vera-Rubin-Ramps-Into-Full-Production-to-Power-Agentic-AI-Factories-Worldwide/default.aspx (31 May 2026)"
+  - when: "By 4 Dec 2026"
+    what: "Q3 FY2027 10-Q due; it confirms or revises the 17 Nov figures used here"
+    source: "SEC Form 10-Q deadline for large accelerated filers; quarter end from the 17 Nov 2026 results release"
+  - when: "No date announced"
+    what: "Investigation findings; a permanent CEO"
+    source: "NVIDIA 8-K, 12 Nov 2026 (accession 0001045810-26-000082)"
   - when: "Late Jan to early Feb 2027 (expected)"
-    what: "Hyperscaler capex guidance with their Q4 calendar-2026 results"
+    what: "Hyperscaler capex guidance"
     source: "usual reporting calendar; dates not yet announced"
   - when: "Late Feb 2027 (expected)"
     what: "Q4 FY2027 results and FY2028 outlook"
     source: "usual reporting calendar; date not yet announced"
-memo_date: "2026-11-09"                  # S9-D6: the memo's date; the analysis stays priced at the Step 2 cutoff
+memo_date: "2026-11-19"                  # S9-D6 / refresh: the memo's date; priced at the 18 Nov 2026 Step 2 cutoff
 risk_triggers:
   gross_margin_cut: 0.70                 # two quarters below this would cut the rating (Risks table)

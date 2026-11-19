@@ -109,7 +109,12 @@ def numbers(x: dict, cfg: dict, ccfg: dict) -> tuple[dict, list[tuple]]:
     fy = md["fiscal_year"].astype(int).max()
     divs = float(md[(md["line_item"] == "dividends") & (md["fiscal_year"] == str(fy))]["value_m"].iloc[0])
     sh = float(md[(md["line_item"] == "shares_diluted_adj") & (md["fiscal_year"] == str(fy))]["value_m"].iloc[0])
-    put("div_yield", divs / sh / price, S5 + f"model_data.csv FY{fy} dividends / diluted shares / price")
+    dvc = cfg.get("dividend")
+    if dvc:   # refresh R-D5 (I-89): the dividend now being paid, annualised; FY{fy} paid far less
+        put("div_yield", 4 * float(dvc["per_share_quarterly"]) / price, "config/memo.yaml dividend: 4 x quarterly dividend per share / price ("
+            + dvc["source"][:60] + "...)")
+    else:
+        put("div_yield", divs / sh / price, S5 + f"model_data.csv FY{fy} dividends / diluted shares / price")
     dc = [float(at.loc[("Base", "datacenter_growth"), f"y{i}"]) for i in range(1, 6)]
     put("dc_g1", dc[0], S5 + "assumptions.csv Base datacenter_growth y1")
     put("dc_g2", dc[1], S5 + "assumptions.csv Base datacenter_growth y2")
@@ -122,9 +127,34 @@ def numbers(x: dict, cfg: dict, ccfg: dict) -> tuple[dict, list[tuple]]:
     put("cons_fy28_bn", e["+1y"] / 1e9, S4 + "estimates.csv NVDA revenue +1y")
     gap = max(abs(rev[0] * 1e6 / e["0y"] - 1), abs(rev[1] * 1e6 / e["+1y"] - 1))
     put("cons_gap_max", max(gap, 0.001), "largest gap of Base revenue to consensus, FY2027-FY2028 (shown as at least 0.1%)")
-    g_ = cfg["guidance"]
-    put("guide_rev_bn", g_["q3_fy27_revenue_bn"], "config/memo.yaml guidance (" + g_["source"][:60] + "...)")
-    put("guide_gm", g_["q3_fy27_gross_margin"], "config/memo.yaml guidance")
+    g_, r_ = cfg["guidance"], cfg["results"]
+    put("guide_q", g_["quarter"], "config/memo.yaml guidance quarter")
+    put("guide_rev_bn", g_["revenue_bn"], "config/memo.yaml guidance (" + g_["source"][:60] + "...)")
+    put("guide_gm_lo", g_["gross_margin_low"], "config/memo.yaml guidance")
+    put("guide_gm_hi", g_["gross_margin_high"], "config/memo.yaml guidance")
+    put("guide_gm", (g_["gross_margin_low"] + g_["gross_margin_high"]) / 2, "midpoint of config/memo.yaml guidance gross margin range")
+    put("res_q", r_["quarter"], "config/memo.yaml results quarter")
+    put("res_rev_bn", r_["revenue_m"] / 1000, "config/memo.yaml results revenue_m (" + r_["source"][:60] + "...)")
+    put("res_gm", r_["gross_profit_m"] / r_["revenue_m"], "config/memo.yaml results gross_profit_m / revenue_m")
+    put("res_dc_bn", r_["datacenter_bn"], "config/memo.yaml results datacenter_bn")
+    put("res_guide_rev_bn", r_["guide_revenue_bn"], "config/memo.yaml results guide_revenue_bn")
+    put("res_guide_gm", r_["guide_gross_margin"], "config/memo.yaml results guide_gross_margin")
+    pv = cfg["previous"]
+    put("prev_memo_date_long", long_date(pv["memo_date"]), "config/memo.yaml previous (" + pv["source"][:60] + "...)")
+    put("prev_price", pv["price"], "config/memo.yaml previous price")
+    put("prev_price_date_long", long_date(pv["price_date"]), "config/memo.yaml previous price_date")
+    put("prev_rating", pv["rating"], "config/memo.yaml previous rating")
+    put("prev_target", pv["target"], "config/memo.yaml previous target")
+    put("prev_pe_rel", pv["pe_rel"], "config/memo.yaml previous pe_rel")
+    put("prev_cons_fy28_bn", pv["cons_fy28_bn"], "config/memo.yaml previous cons_fy28_bn")
+    put("price_fall", 1 - price / pv["price"], "1 - price / previous price")
+    ld = cfg["leadership"]
+    put("lead_event", ld["event"], "config/memo.yaml leadership (" + ld["source"] + ")")
+    put("lead_source", ld["short_source"], "config/memo.yaml leadership (" + ld["source"] + ")")
+    put("lead_inv", ld["investigation"], "config/memo.yaml leadership (" + ld["investigation_source"][:60] + "...)")
+    put("tenq_due", ld["tenq_due"], "config/memo.yaml leadership (" + ld["tenq_due_basis"] + ")")
+    for s_ in ("bear", "base", "bull"):
+        put(f"w_{s_}", float(di[f"w_{s_}"]), S6 + f"dcf_inputs.csv w_{s_} (config/dcf.yaml scenario_weights)")
     gm = [float(at.loc[("Base", "gross_margin"), f"y{i}"]) for i in range(1, 6)]
     put("gm_fy27", gm[0], S5 + "assumptions.csv Base gross_margin y1")
     put("gm_fy29", gm[2], S5 + "assumptions.csv Base gross_margin y3")
@@ -166,6 +196,17 @@ def numbers(x: dict, cfg: dict, ccfg: dict) -> tuple[dict, list[tuple]]:
     put("ltm_eve_med", float(di["exit_multiple"]), S6 + "dcf_inputs.csv exit_multiple (peer median LTM EV/EBITDA)")
     put("dcf_up", n["dcf_w"] / price - 1, "dcf_w / price - 1")
     put("comps_up", n["comps"] / price - 1, "comps / price - 1")
+    put("base_up", n["base"] / price - 1, "base / price - 1")
+    xc = PROJECT_ROOT / "tests" / "fixtures" / "estimates_crosscheck.csv"   # the second-source consensus record (S4-D2)
+    if xc.exists():
+        c = rd(xc)
+        c = c[(c["ticker"] == T) & (c["kind"] == "eps")].set_index("period")
+        if {"0y", "+1y"} <= set(c.index):
+            w0 = float(tb.loc[T, "w_fy0"])
+            alt = w0 * float(c.loc["0y", "reference_avg"]) + (1 - w0) * float(c.loc["+1y", "reference_avg"])
+            put("eps_alt_gap", float(tb.loc[T, "eps_ntm"]) / alt - 1, "comps_table.csv NVDA eps_ntm / Nasdaq NTM EPS (tests/fixtures/estimates_crosscheck.csv, as of "
+                + c.loc["+1y", "as_of"] + ") - 1")
+            put("imp_pe_alt", n["imp_pe"] / (1 + n["eps_alt_gap"]), "imp_pe on Nasdaq NTM EPS")
     sc = x["score"].set_index("ticker")
     put("nv_score", int(sc.loc[T, "total"]), S4 + "exports/v_scorecard.csv NVDA total")
     put("score_max", int(sc.loc[T, "max_possible"]), S4 + "exports/v_scorecard.csv max_possible")
@@ -186,14 +227,24 @@ def claims(n: dict, x: dict) -> list[tuple]:
     """M1: the comparative words in the template are true for this data."""
     tb = x["tb"].set_index("ticker")
     sc = x["score"].set_index("ticker")["total"].astype(int)
+    sd = x["score"].set_index("ticker")
+    nv_tests = {c: int(v) for c, v in sd.loc[T].items() if re.fullmatch(r"t\d+_.*", c)}
     out = [("highest NTM growth of six", float(tb["growth_ntm"].astype(float).idxmax() == T)),
            ("highest gross margin of six", float(tb["gross_margin_ltm"].astype(float).idxmax() == T)),
            ("lowest NTM P/E of six", float(tb["pe_ntm"].astype(float).idxmin() == T)),
-           ("scorecard highest of six, tied with QCOM", float(sc.max() == sc[T] == sc["QCOM"] and (sc == sc.max()).sum() == 2)),
+           ("scorecard highest of six, alone", float(sc.max() == sc[T] and (sc == sc.max()).sum() == 1)),
+           ("scorecard: FCF conversion the only test below full marks", float([k for k, v in nv_tests.items() if v < 2] == ["t7_fcf_conversion"])),
            ("NVIDIA NTM growth above Broadcom's", float(n["nv_growth"] > n["avgo_growth"])),
            ("DCF and comps point in opposite directions", float(n["dcf_up"] < 0 < n["comps_up"])),
-           ("reverse-DCF WACC below ours", float(n["rev_wacc"] < n["wacc"])),
-           ("Base FY2029 margin is the floor through FY2029", 1.0)]
+           ("Base DCF above the price", float(n["base"] > n["price"])),
+           ("reverse-DCF WACC above ours (the price needs a higher discount rate than ours)", float(n["rev_wacc"] > n["wacc"])),
+           ("Base FY2029 margin is the floor through FY2029", 1.0),
+           ("Q3 revenue and gross margin above their guides", float(n["res_rev_bn"] > n["res_guide_rev_bn"] and n["res_gm"] > n["res_guide_gm"])),
+           ("Q4 guide midpoint within 0.5pt of the Base FY2029 floor", float(abs(n["guide_gm"] - n["gm_floor"]) <= 0.005)),
+           ("NTM P/E relative to peers fell since the last memo", float(n["pe_rel"] < n["prev_pe_rel"])),
+           ("FY2028 consensus rose since the last memo", float(n["cons_fy28_bn"] > n["prev_cons_fy28_bn"])),
+           ("price fell since the last memo", float(n["price"] < n["prev_price"])),
+           ("target cut since the last memo", float(n["target"] < n["prev_target"]))]
     return [(name, bool(ok)) for name, ok in out]
 
 
@@ -209,10 +260,11 @@ def exhibits(n: dict, x: dict) -> dict:
     at = x["at"][(x["at"]["ticker"] == T)].set_index(["scenario", "driver"])
     fc = x["fc"][(x["fc"]["ticker"] == T)].set_index(["scenario", "row"])
     price = n["price"]
-    val = [["DCF, Bear / Base / Bull", f"{n['bear']:.2f} / {n['base']:.2f} / {n['bull']:.2f}", "", "WACC 13.87%, g 3%"],
-           ["DCF, probability-weighted (25/50/25)", f"{n['dcf_w']:.2f}", f"{n['dcf_up']:+.0%}", "Step 6"],
+    val = [["DCF, Bear / Base / Bull", f"{n['bear']:.2f} / {n['base']:.2f} / {n['bull']:.2f}", "", ""],
+           [f"DCF, probability-weighted ({n['w_bear']:.0%}/{n['w_base']:.0%}/{n['w_bull']:.0%})", f"{n['dcf_w']:.2f}", f"{n['dcf_up']:+.0%}", "Step 6"],
            ["DCF, rolled forward 12 months", f"{n['dcf_fwd']:.2f}", f"{n['dcf_fwd'] / price - 1:+.0%}", f"× (1 + {n['ke']:.2%} − {n['div_yield']:.2%})"],
-           ["Comps: peer-median NTM P/E", f"{n['imp_pe']:.2f}", f"{n['imp_pe'] / price - 1:+.0%}", f"{n['med_pe']:.1f}× on NTM EPS"],
+           ["Comps: peer-median NTM P/E", f"{n['imp_pe']:.2f}", f"{n['imp_pe'] / price - 1:+.0%}", f"{n['med_pe']:.1f}× on NTM EPS"
+            + (f" (Yahoo EPS, {n['eps_alt_gap']:.1%} above Nasdaq's; {n['imp_pe_alt']:.0f} on Nasdaq's, I-90)" if abs(n.get("eps_alt_gap", 0)) > 0.05 else "")],
            ["Comps: peer-median NTM EV/EBITDA", f"{n['imp_eve']:.2f}", f"{n['imp_eve'] / price - 1:+.0%}", f"{n['med_eve']:.1f}× via Step 6 bridge"],
            ["Comps value (mean of the two)", f"{n['comps']:.2f}", f"{n['comps_up']:+.0%}", "S7-D1"],
            ["Growth-adjusted EV/revenue", f"{n['reg_price']:.2f}", f"{n['reg_price'] / price - 1:+.0%}", "indicative, 5 peers"],
@@ -242,7 +294,7 @@ def exhibits(n: dict, x: dict) -> dict:
     ex_comps = table(crow, ["", "NTM revenue growth", "Gross margin (LTM)", "EV / revenue", "EV / EBITDA", "P / E"]) + \
         "\n\n† AMD: no EBITDA multiple (fiscal-year EBITDA basis, S3-D11). NTM EBITDA = NTM revenue × LTM EBITDA margin (S7-D4)."
     srow = []
-    for s, wgt in (("Bear", 0.25), ("Base", 0.5), ("Bull", 0.25)):
+    for s, wgt in (("Bear", n["w_bear"]), ("Base", n["w_base"]), ("Bull", n["w_bull"])):
         srow.append([s, f"{wgt:.0%}", f"{float(fc.loc[(s, 'revenue'), 'y2']) / 1000:,.0f}", f"{float(at.loc[(s, 'datacenter_growth'), 'y2']):.0%}",
                      f"{float(at.loc[(s, 'gross_margin'), 'y2']):.1%}", f"{float(fc.loc[(s, 'eps'), 'y2']):.2f}",
                      f"{float(dv[s.lower() + '_per_share']):.2f}", f"{float(dv[s.lower() + '_upside']):+.0%}"])
